@@ -1,0 +1,9 @@
+pcm hw:0
+bsize 256
+rate 44100
+poly 6
+threads 2
+keyboard_id 20
+keyboard_port 0
+
+Note: These config option must remain in order, the names are for personal reference only
