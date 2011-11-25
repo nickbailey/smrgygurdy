@@ -1,7 +1,10 @@
-HurdyGurdy
-revision 801
+SMRGyGurdy
 
-Author: Team E
+A physical-model-based, polyphonic hurdygurdy synthesiser
+based on Graham Percival's artifastring library.
+
+Author: EE+Computing Students Team E
+Maintained by: Nick Bailey
 Date: 21 March 2011
 
 To view the documentation go to 
