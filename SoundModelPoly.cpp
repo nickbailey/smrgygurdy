@@ -3,7 +3,7 @@
 #include <vector>
 
 /* All samples will be multiplied by this constant to avoid clipping */
-#define MIX_MULTIPLIER 0.5 /* TODO: This needs to be centralised better */
+#define MIX_MULTIPLIER 0.2 /* TODO: This needs to be centralised better */
 
 SoundModelPoly::SoundModelPoly(std::vector<SoundModel*> soundModelList) {
 

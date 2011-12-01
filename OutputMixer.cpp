@@ -2,6 +2,8 @@
 #include "OutputSink.h"
 #include <cstring>
 
+#include <iostream>
+
 OutputMixer::OutputMixer(int playoutno, OutputSink *outputHandle, int length) {
 
 	this->playoutno = playoutno;
@@ -26,7 +28,6 @@ void OutputMixer::writeSamples(short buffer[], int length) {
 	// Mix into the buffer 
 	bufflock.acquire();
 	for ( i = 0; i < length; i++ ) {
-
 		this->buffer[i] += buffer[i]; 
 	}
 	bufflock.release();
@@ -34,7 +35,6 @@ void OutputMixer::writeSamples(short buffer[], int length) {
 	// Deal with multiple sources
 	countlock.acquire();
 	count--;
-
 	if ( count == 0 ) {
 		
 		// Samples written and buffer reset

@@ -16,16 +16,13 @@ PlayoutThread::PlayoutThread(OutputSink * outputHandle, SoundModel *model, int b
 
 void PlayoutThread::run() {
 	
-	short *dataBuf = new short[bufferSize];
-	/* Could be replaced with a vector if you prefer stack allocation */
-
+	short dataBuf[bufferSize];
+std::cout << "playout\n";
 	while(isPlaying()) {
-
 		model->getSamples(dataBuf, bufferSize);
 		outputHandle->writeSamples(dataBuf, bufferSize);
 	}
 
-	delete dataBuf;
 }
 
 void PlayoutThread::stop() {

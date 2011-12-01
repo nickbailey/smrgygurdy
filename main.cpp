@@ -7,6 +7,7 @@
 #include "SoundModelPoly.h"
 #include "PlayoutThread.h"
 #include "Pedal.h"
+#include "MiniLAB1008.h"
 #include "Factory.h"
 #include "Controller.h"
 #include "Keyboard.h"
@@ -80,7 +81,7 @@ int main(int argc, char ** argv) {
 	keyboard.start();
 
 	// Create Pedal
-	Pedal pedal(&controller);
+	MiniLAB1008 pedal(&controller);
 	pedal.start();
 
 

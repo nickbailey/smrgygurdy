@@ -55,7 +55,8 @@ void OutputDirect::writeSamples(short buffer[], int length) {
 	   happen. It doesn't seem to be a channel issue or a data size
 	   issue */
 
-	while((snd_pcm_writei(playbackHandle, buffer, length/2)) < length/2) {
+	//while((snd_pcm_writei(playbackHandle, buffer, length/2)) < length/2) {
+	while((snd_pcm_writei(playbackHandle, buffer, length)) < length) {
 				
 		// Buffer XRUN occured here
 		snd_pcm_prepare(playbackHandle); /* Needs to be called to recover */

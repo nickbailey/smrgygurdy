@@ -5,8 +5,8 @@
 
 StringAllocator::StringAllocator(): 
 
-	bowRatioFromBridge(0.1),
-	bowForce(1.0), //was 9.5
+	bowRatioFromBridge(0.07),
+	bowForce(1.5), //was 9.5
 	vGString(45), /* TODO: Get the real value for this - semitone value of lowest string on violin */
 	stringSpace(7),
 	violin() {

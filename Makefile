@@ -1,12 +1,13 @@
-CXXFLAGS += -W -Wall -I/usr/local/include -std=c++0x
+CXXFLAGS += -O3 -W -Wall -I/usr/local/include -std=c++0x
 LD_FLAGS += -L/usr/local/lib
 LD_LIBS  += -lasound -lpthread -lartifastring -lmcchid -lhid -lusb -lm
 
-APP  := smurgygurdy
+APP  := smrgygurdy
 
 SRCS := SoundModelMono.cpp SoundModelPoly.cpp StringAllocator.cpp Factory.cpp \
         OutputDirect.cpp OutputMixer.cpp PlayoutThread.cpp \
-        Pedal.cpp Keyboard.cpp \
+        Pedal.cpp MiniLAB1008.cpp \
+        Keyboard.cpp \
         Lock.cpp Thread.cpp \
         main.cpp Controller.cpp
 

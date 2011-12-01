@@ -26,7 +26,6 @@ void SoundModelMono::getSamples(short samples[], int bufferSize) {
 		violin.getSamples(samples, bufferSize);
 		release -= bufferSize;
 		if(release < 0) release = 0;
-
 	}  else {
 		memset(samples, 0, bufferSize*sizeof(short));
 		/* This is negligable in terms of time compared to rendering the sound */

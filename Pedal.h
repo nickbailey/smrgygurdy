@@ -15,8 +15,8 @@
 #include <asm/types.h>
 #include <stdbool.h>
 
-#include "pmd.h"
-#include "minilab-1008.h"
+#include <libhid/pmd.h>
+#include <libhid/minilab-1008.h>
 
 /**
  * Provides an interface for the minilab 1008 ADC.
@@ -24,22 +24,18 @@
  */
 class Pedal : public Thread {
 	
-	hid_return ret;
-	HIDInterface* hid;
-	Controller* controller;
+ public:
+     Pedal();
+ 
+    /** 
+     * Method invoked when the thread begins to poll the pedal.
+     * It opens the HID and reads values from the A to D, sending
+     * messages to the nominated controller when the value is changed.
+     **/
+    virtual void run() = 0;
 
- public: 
-
-	/**
-	 * Default constructor
-	 * @param controller An instance of the Controller class
-	 */
-	Pedal(Controller *controller);
-
-	/**
-	 * Poll the ADC for the converted voltage from the pedal.
-	 */
-	void run();
+ private:
+    Controller *controller;
 
 };
 #endif /*PEDAL_H*/
