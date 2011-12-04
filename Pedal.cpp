@@ -10,5 +10,8 @@
 #include <libhid/pmd.h>
 #include <libhid/minilab-1008.h>
 
-Pedal::Pedal() { }
+Pedal::Pedal(Controller *c)
+{
+    controller = c;
+}
 

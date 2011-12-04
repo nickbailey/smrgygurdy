@@ -25,7 +25,7 @@
 class Pedal : public Thread {
 	
  public:
-     Pedal();
+     explicit Pedal(Controller *c);
  
     /** 
      * Method invoked when the thread begins to poll the pedal.
