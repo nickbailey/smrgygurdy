@@ -34,8 +34,13 @@ class Pedal : public Thread {
      **/
     virtual void run() = 0;
 
- private:
-    Controller *controller;
+    /**
+     * Find the current pedal depression in the range 0.0 - 1.0
+     */
+    double get_value() const { return value; }
 
+ protected:
+    Controller *controller;
+    double value;
 };
 #endif /*PEDAL_H*/

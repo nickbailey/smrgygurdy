@@ -66,8 +66,11 @@ class Controller: public Thread{
    *Creates a new controller object.
    *
    *@param playout Soundmodel to which controller passes signals.
+   *@param speed_min Bow speed minimum pedal value (0)
+   *@param speed_max Bow speed for max pedal value (1.0)
    */
-  Controller(SoundModel *playout);
+  Controller(SoundModel *playout,
+             double speed_min = 0.15, double speed_max = 1.6);
 
   /**
    *Called when a controller object is destroyed.
@@ -91,13 +94,24 @@ class Controller: public Thread{
   virtual void run();
 
   /**
-   *Called by pedal interface whenever speed changes significantly.
+   * Called by pedal interface whenever speed changes significantly.
+   * The value supplied is a double in the range 0.0-1.0.
+   * This is mapped into a bow speed in the range given when the
+   * object is constructed (defaults are supplied).
    *
-   *Calls setPedalSpeed method in playout to pass on new value.
+   * Calls setPedalSpeed method in playout to pass on new value.
    *
-   *@param speed Speed at which bow should rotate.
+   * @param speed Speed at which bow should rotate.
    */
   void speedChange(double speed);
+
+  /**
+   * Access the current physical bow speed
+   */
+  double get_bow_speed() const { return speed; }
+ private:
+  double max_speed; ///< maximum bow speed (pedal = 1.0)
+  double min_speed; ///< minumum bow speed (pedal = 0.0)
 };
 
 #endif /* CONTROLLER_H */

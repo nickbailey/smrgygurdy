@@ -6,7 +6,7 @@
 StringAllocator::StringAllocator(): 
 
 	bowRatioFromBridge(0.07),
-	bowForce(1.5), //was 9.5
+	bowForce(0.7), //was 9.5
 	vGString(45), /* TODO: Get the real value for this - semitone value of lowest string on violin */
 	stringSpace(7),
 	violin() {
@@ -63,6 +63,6 @@ void StringAllocator::setSemitone(int semitone) {
 void StringAllocator::setPedalSpeed(double speed) {
 	
 	bowSpeed = speed;
-	std:: cout << "StringAllocator: Changing pedal speed to " << speed << std::endl;
+	//std:: cout << "StringAllocator: Changing pedal speed to " << speed << std::endl;
 	violin.bow (stringNo, bowRatioFromBridge, bowForce, bowSpeed);
 }

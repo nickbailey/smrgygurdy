@@ -85,10 +85,29 @@ int main(int argc, char ** argv) {
 	pedal.start();
 
 
-	// Quit
+	// Console interaction
 
-	cout << "Press Q to quit" << endl;
-	while( getchar() != 'q');
+	cout << "Enter Q to quit" << endl;
+	cout << "      C to report stats" << endl;
+	int c;
+	while( (c = getchar()) != 'q') {
+	    switch (c) {
+	      case 'c':
+	        cout << "Bowing at " << controller.get_bow_speed() <<
+                        "m/s because pedal value is " <<
+	                pedal.get_value() << endl; 
+	        break;
+
+
+	      case EOF:      break;
+	      case '\n':     break;
+	      case ' ':      break;
+
+	      default:
+	        cout << c << "? eh?" << endl;
+
+	    }
+	}
 	return 0;	
 }
 

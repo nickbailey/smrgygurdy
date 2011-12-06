@@ -6,12 +6,13 @@
 #include <string>
 #include <iostream>
 
-Controller::Controller(SoundModel *playout) :
-	noteQueue()
+Controller::Controller(SoundModel *playout,
+                       double speed_min,
+                       double speed_max) :
+	isPlaying(true), pedalTriggered(false),
+	noteQueue(),
+	speed(speed_max), max_speed(speed_max), min_speed(speed_min)
 {
-	isPlaying = true;
-	pedalTriggered = false;
-	speed = 1;
 	playout->setPedalSpeed(speed);
 	this->playout = playout;
 }
@@ -21,7 +22,6 @@ Controller::~Controller(){
 
 
 void Controller::run(){
-
 	while(isPlaying){
 		//Wait until a signal is received.
 		outputLock.acquire();
@@ -72,7 +72,7 @@ void Controller::keyEvent(bool type, int note){
 
 void Controller::speedChange(double spd){
 	pedalLock.acquire();
-	speed = spd;
+	speed = min_speed + spd*(max_speed - min_speed);
 	pedalTriggered = true;
 	pedalLock.release();
 	outputLock.acquire();
