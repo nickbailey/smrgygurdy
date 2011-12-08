@@ -9,3 +9,20 @@ Date: 21 March 2011
 
 To view the documentation go to 
 doc/index.html
+
+To build for the first time from source, do:
+
+	./autogen.sh
+	./configure
+
+The smrgygurdy program will be built in the src directory.
+
+The following libraries need to be installed first:
+
+	artifastring
+	libusb (if configured to use the MiniLAB HID)
+	libhid (if configured to use the MiniLAB HID)
+
+libhid is distributed in the tar file in the top level of this
+package, for convenience.
+
