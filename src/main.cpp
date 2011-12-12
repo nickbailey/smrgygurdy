@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <config.h>
 #include "SoundModelPoly.h"
 #include "PlayoutThread.h"
 #include "Pedal.h"
@@ -81,7 +82,9 @@ int main(int argc, char ** argv) {
 	keyboard.start();
 
 	// Create Pedal
+#ifdef SUPPORT_MINILAB1080
 	MiniLAB1008 pedal(&controller);
+#endif
 	pedal.start();
 
 

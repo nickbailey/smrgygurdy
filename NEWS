@@ -1,0 +1,7 @@
+v1.1 12 December 2011
+
+Support for comedi will be default from now on.
+To use MiniLAB pedal instead, say:
+
+	./configure --with-MiniLAB1080 --without-comedi
+
