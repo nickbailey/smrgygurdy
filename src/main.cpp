@@ -82,7 +82,7 @@ int main(int argc, char ** argv) {
 	keyboard.start();
 
 	// Create Pedal
-#ifdef SUPPORT_MINILAB1080
+#ifdef SUPPORT_MINILAB1008
 	MiniLAB1008 pedal(&controller);
 #endif
 	pedal.start();

@@ -110,8 +110,8 @@
 /* Build support for comedi interfaces */
 #undef SUPPORT_COMEDI
 
-/* Include support for the MiniLAB1080 interface */
-#undef SUPPORT_MINILAB1080
+/* Include support for the MiniLAB1008 interface */
+#undef SUPPORT_MINILAB1008
 
 /* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
 #undef TIME_WITH_SYS_TIME

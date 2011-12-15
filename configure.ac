@@ -44,10 +44,12 @@ AC_CHECK_LIB([asound], [snd_seq_open], [], [
 ])
 
 dnl Handle --with arguments
-AC_ARG_WITH([MiniLAB1080],
-            AS_HELP_STRING([--with-MiniLAB1080], 
-                           [Include support for MiniLAB1080 A-D]))
-AS_IF([test "x$with_MiniLAB1080" = "xyes"], [
+dnl Which pedal hardware support classes get built?
+
+AC_ARG_WITH([MiniLAB1008],
+            AS_HELP_STRING([--with-MiniLAB1008], 
+                           [Include support for MiniLAB1008 A-D]))
+AS_IF([test "x$with_MiniLAB1008" = "xyes"], [
     PKG_CHECK_MODULES([LIBHID], [libhid, libusb], [], [
         AC_MSG_ERROR([cannot find libusb (needed with MiniLAB-1008 interface)])
     ])
@@ -58,8 +60,9 @@ AS_IF([test "x$with_MiniLAB1080" = "xyes"], [
             Set e.g. LDFLAGS=-L/usr/local/lib CXXFLAGS=-I/usr/local/include
         ])
     ], [$LIBHID_LIBS])
-    AC_DEFINE([SUPPORT_MINILAB1080], [], 
-              [Include support for the MiniLAB1080 interface])
+    AC_DEFINE([SUPPORT_MINILAB1008], [], 
+              [Include support for the MiniLAB1008 interface])
+    PEDAL_CLASSES="$PEDAL_CLASSES MiniLAB1008.\$(OBJEXT)"
 ])
 
 AC_ARG_WITH([comedi],
@@ -74,14 +77,17 @@ AS_IF([test "x$with_comedi" "!=" "xno"], [
     ])
     AC_DEFINE([SUPPORT_COMEDI], [],
               [Build support for comedi interfaces])
+    PEDAL_CLASSES="$PEDAL_CLASSES comedi.\$(OBJEXT)"
 ])
 
 dnl Advise user if no pedal hardware is supported
 
 if test "x$with_comedi" = xno &&
-   test "x$with_MiniLAB1080" "!=" xyes ; then
+   test "x$with_MiniLAB1008" "!=" xyes ; then
     AC_MSG_WARN([no pedal hardware interfaces configured!])
 fi
+
+AC_SUBST([PEDAL_CLASSES])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
