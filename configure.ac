@@ -16,7 +16,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 
 # Checks for header files.
-AC_CHECK_HEADERS([fcntl.h stdlib.h string.h sys/time.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h stdlib.h string.h sys/time.h unistd.h sys/types.h sys/stat.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
@@ -37,6 +37,10 @@ dnl to actually include the library.
 
 PKG_CHECK_MODULES([ARTIFASTRING], [artifastring], [], [
     AC_MSG_ERROR([cannot find libartifastring])
+])
+
+PKG_CHECK_MODULES([LIBCONFIGXX], [libconfig++], [], [
+    AC_MSG_ERROR([cannot find libconfig++])
 ])
 
 AC_CHECK_LIB([asound], [snd_seq_open], [], [

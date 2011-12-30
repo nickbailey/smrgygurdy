@@ -1,9 +1,11 @@
 #include <cstdio>
 #include <iostream>
-#include <cstdlib>
 #include <fstream>
 #include <string>
 #include <vector>
+#include <libconfig.h++>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <config.h>
 #include "SoundModelPoly.h"
 #include "PlayoutThread.h"
@@ -17,7 +19,9 @@
 #include "Controller.h"
 #include "Keyboard.h"
 
+
 using namespace std;
+using namespace libconfig;
 
 int main(int argc, char ** argv) {
 
@@ -26,26 +30,30 @@ int main(int argc, char ** argv) {
 		exit(1);
 	}
 
-	// Load data from file
-	int i;
-
-	fstream file("config");
-	string n[10];
-	string v[10];
-
-	for (i = 0; i < 10; i++) {
-	        file >> n[i] >> v[i];
+	// Check to see whether configuration file exists
+	string cfg_path(getenv("HOME"));
+        cfg_path += "/.smrgygurdy";
+	struct stat cfg_stat;
+	if (stat(cfg_path.c_str(), &cfg_stat) == -1) {
+		cerr << "Couldn't stat config file" << endl;
+		exit(-1); // Should maybe copy a standard one here?
 	}
-	
-	file.close();
+	if (!(cfg_stat.st_mode & S_IRUSR)) {
+		cerr << "Cannot read from " << cfg_path <<
+		        ": insufficient permission" << endl;
+		exit(-1);
+	}
 
-	string pcm = v[0];
-	int bsize = atoi(v[1].c_str());
-	int rate = atoi(v[2].c_str());
-	int poly = atoi(v[3].c_str());
-	int noThreads = atoi(v[4].c_str());
-	int keyboard_id = atoi(v[5].c_str());
-	int keyboard_port = atoi(v[6].c_str());
+	Config cfg;
+	cfg.readFile(cfg_path.c_str());
+
+	string pcm;        cfg.lookupValue("pcm", pcm);
+	int bsize;         cfg.lookupValue("buffer_size", bsize);
+	int rate;          cfg.lookupValue("sample_rate", rate);
+	int poly;          cfg.lookupValue("max_voices", poly);
+	int noThreads;     cfg.lookupValue("threads", noThreads);
+	int keyboard_id;   cfg.lookupValue("midi.controller_id", keyboard_id);
+	int keyboard_port; cfg.lookupValue("midi.controller_port", keyboard_port);
 
 	// Create Models
 	SoundModel *mainModel;			/* SoundModel to be passed to controller */
@@ -117,6 +125,7 @@ int main(int argc, char ** argv) {
 
 	    }
 	}
+	cfg.writeFile(cfg_path.c_str());
 	return 0;	
 }
 

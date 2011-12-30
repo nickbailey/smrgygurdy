@@ -13,7 +13,7 @@ smrgygurdy_SOURCES = \
 EXTRA_smrgygurdy_SOURCES = MiniLAB1080.cpp Comedi.cpp
 
 smrgygurdy_LDADD = $(PEDAL_CLASSES) \
-                   $(ARTIFASTRING_LIBS) $(LIBHID_LIBS) \
-                   $(BOGIO_LIBS)
+                   $(ARTIFASTRING_LIBS) $(LIBCONFIGXX_LIBS) \
+                   $(LIBHID_LIBS) $(BOGIO_LIBS)
 smrgygurdy_DEPENDENCIES = $(PEDAL_CLASSES)
  
