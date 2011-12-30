@@ -77,7 +77,7 @@ AS_IF([test "x$with_comedi" "!=" "xno"], [
     ])
     AC_DEFINE([SUPPORT_COMEDI], [],
               [Build support for comedi interfaces])
-    PEDAL_CLASSES="$PEDAL_CLASSES comedi.\$(OBJEXT)"
+    PEDAL_CLASSES="$PEDAL_CLASSES Comedi.\$(OBJEXT)"
 ])
 
 dnl Advise user if no pedal hardware is supported

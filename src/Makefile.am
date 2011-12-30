@@ -10,8 +10,10 @@ smrgygurdy_SOURCES = \
         Lock.cpp Thread.cpp \
         main.cpp Controller.cpp
 
-EXTRA_smrgygurdy_SOURCES = MiniLAB1080.cpp comedi.cpp
+EXTRA_smrgygurdy_SOURCES = MiniLAB1080.cpp Comedi.cpp
 
-smrgygurdy_LDADD = $(PEDAL_CLASSES) $(ARTIFASTRING_LIBS) $(LIBHID_LIBS)
+smrgygurdy_LDADD = $(PEDAL_CLASSES) \
+                   $(ARTIFASTRING_LIBS) $(LIBHID_LIBS) \
+                   $(BOGIO_LIBS)
 smrgygurdy_DEPENDENCIES = $(PEDAL_CLASSES)
  

@@ -8,7 +8,11 @@
 #include "SoundModelPoly.h"
 #include "PlayoutThread.h"
 #include "Pedal.h"
+#ifdef SUPPORT_MINILAB1008
 #include "MiniLAB1008.h"
+#else
+#include "Comedi.h"
+#endif
 #include "Factory.h"
 #include "Controller.h"
 #include "Keyboard.h"
@@ -84,6 +88,8 @@ int main(int argc, char ** argv) {
 	// Create Pedal
 #ifdef SUPPORT_MINILAB1008
 	MiniLAB1008 pedal(&controller);
+#else
+	Comedi pedal(&controller);
 #endif
 	pedal.start();
 
