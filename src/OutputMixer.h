@@ -35,6 +35,14 @@ class OutputMixer : public OutputSink {
 		OutputMixer(int sources, OutputSink *outputHandle, int bufferSize);
 
 		/**
+		 * Create a new OutputMixer with its own aggregated OutputDirect
+		 *
+		 * Unlike the alternative constructor, the OutputDirect will
+		 * be automatically deleted on the instance's destrution
+		 */
+		OutputMixer(int sources, std::string pcm, int bufferSize, int rate);
+
+		/**
 		 * Destructor
 		 */
 		~OutputMixer();
@@ -57,4 +65,14 @@ class OutputMixer : public OutputSink {
  		 */
 		virtual void close();	
 
+	private:
+		/**
+		 * Do the construtors' work
+		 */
+		void init(int sources, OutputSink *outputHandle, int bufferSize);
+		/**
+		 * Whether to delete our OutputHandle in the destructor
+		 */
+		bool privateOutputHandle;
+		
 };

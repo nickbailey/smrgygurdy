@@ -1,10 +1,11 @@
 #include "OutputMixer.h"
 #include "OutputSink.h"
+#include "OutputDirect.h"
 #include <cstring>
 
 #include <iostream>
 
-OutputMixer::OutputMixer(int playoutno, OutputSink *outputHandle, int length) {
+void OutputMixer::init(int playoutno, OutputSink *outputHandle, int length) {
 
 	this->playoutno = playoutno;
 	this->count = playoutno;
@@ -16,9 +17,20 @@ OutputMixer::OutputMixer(int playoutno, OutputSink *outputHandle, int length) {
 	memset(this->buffer, 0, bufferSize*sizeof(short));
 }
 
+OutputMixer::OutputMixer(int playoutno, OutputSink *outputHandle, int length) {
+	init(playoutno, outputHandle, length);
+	privateOutputHandle = false;	// Caller's OutputDirect, don't delete
+}
+
+OutputMixer::OutputMixer(int sources, std::string pcm, int bufferSize, int rate) {
+	init(sources, new OutputDirect(pcm, bufferSize, rate), bufferSize);
+	privateOutputHandle = true;	// My OutputDirect, delete it later
+}
+
 OutputMixer::~OutputMixer() {
 
-	delete[] (this->buffer);
+	delete[] buffer;
+	if (privateOutputHandle) delete outputHandle;
 }
 
 

@@ -10,12 +10,12 @@
 #include "SoundModelPoly.h"
 #include "PlayoutThread.h"
 #include "Pedal.h"
+#include "OutputMixer.h"
 #ifdef SUPPORT_MINILAB1008
 #include "MiniLAB1008.h"
 #else
 #include "Comedi.h"
 #endif
-#include "Factory.h"
 #include "Controller.h"
 #include "Keyboard.h"
 
@@ -61,7 +61,7 @@ int main(int argc, char ** argv) {
 	PlayoutThread *pothreads[noThreads];	/* Threads which render sound data */
 	OutputSink *sink;			/* Polyphonic sink to be used by all threads */
 
-	sink = makeOutputSink(noThreads, pcm, bsize, rate);
+	sink = new OutputMixer(noThreads, pcm, bsize, rate);
 
 	/* This will assign SoundModelMono instances as equally as possible to SoundModelPoly's
 	   which will then be used by threads */
@@ -74,7 +74,7 @@ int main(int argc, char ** argv) {
 		int models = perThread;
 		if(i < extra) models++;
 		cout << "Assigning " << models << " models to a thread" << endl;
-		subModels.push_back(makeSoundModelPoly(models));
+		subModels.push_back(new SoundModelPoly(models));
 	}
 
 	mainModel = (SoundModel*)(new SoundModelPoly(subModels));

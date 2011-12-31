@@ -103,7 +103,7 @@ class Controller: public Thread{
    *
    * @param speed Speed at which bow should rotate.
    */
-  void speedChange(double speed);
+  void speedChange(double spd);
 
   /**
    * Access the current physical bow speed

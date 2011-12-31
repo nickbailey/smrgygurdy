@@ -1,4 +1,5 @@
 #include "SoundModelPoly.h"
+#include "SoundModelMono.h"
 #include <cstring>
 #include <vector>
 
@@ -12,6 +13,12 @@ SoundModelPoly::SoundModelPoly(std::vector<SoundModel*> soundModelList) {
 	if(soundModelList.size() == 0)
 		throw new NoSoundModelException();
 
+}
+
+SoundModelPoly::SoundModelPoly(int poly) {
+	for (int i = 0; i < poly; i++) {
+		soundModelList.push_back(new SoundModelMono);
+	}
 }
 
 void SoundModelPoly::setNoteOn(int semitone) {

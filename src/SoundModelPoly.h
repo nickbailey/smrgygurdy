@@ -34,6 +34,16 @@ class SoundModelPoly : public SoundModel {
 		SoundModelPoly(std::vector<SoundModel*> soundModelList);
 
 		/**
+		 * Create a SoundModelPoly with a number of SoundModelMonos
+		 *
+		 * A less flexible but more convenient form of the constructor
+		 * which creates a given number of monophonic sound sources
+		 *
+		 * @param poly The numer of monophonic sound models to create
+		 */
+		SoundModelPoly(int poly);
+
+		/**
 		 * Start a note playing. 
 		 *
 		 * This will try to prioritise SoundModels which are not
