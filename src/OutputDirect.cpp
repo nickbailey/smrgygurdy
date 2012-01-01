@@ -6,7 +6,8 @@
 
 #define CHANNELS 1 
 
-OutputDirect::OutputDirect(std::string pcmName, unsigned int periodSize, unsigned int rate)
+OutputDirect::OutputDirect(std::string pcmName, unsigned int periodSize, unsigned int rate) :
+    underrunning(false)
 {
 
 	playbackHandle = openPcm(pcmName, periodSize, rate);
@@ -44,26 +45,29 @@ snd_pcm_t * OutputDirect::openPcm(std::string pcmName, unsigned int periodSize, 
 }
 
 OutputDirect::~OutputDirect() {
-
 	// Nothing to do here
 }
 
 void OutputDirect::writeSamples(short buffer[], int length) {
 
-	/* There is something interesting going on here where it requires
-	   the length to be divided by two. If this is removed, bad things
-	   happen. It doesn't seem to be a channel issue or a data size
-	   issue */
-
-	//while((snd_pcm_writei(playbackHandle, buffer, length/2)) < length/2) {
 	while((snd_pcm_writei(playbackHandle, buffer, length)) < length) {
 				
 		// Buffer XRUN occured here
 		snd_pcm_prepare(playbackHandle); /* Needs to be called to recover */
-		std::cerr << "OutputDirect: Buffer underrun occurred" << std::endl;
-
+		reportUnderrun();
 	}
+
+	if (underrunning > 0) underrunning--;
 }
+
+void OutputDirect::reportUnderrun(void) {
+	if (!underrunning) {
+		std::cerr << "OutputDirect: Buffer underrun occurred" <<
+		             std::endl;
+	}
+	underrunning = 20;
+}
+		
 
 void OutputDirect::close() {
 

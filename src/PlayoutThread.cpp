@@ -17,7 +17,6 @@ PlayoutThread::PlayoutThread(OutputSink * outputHandle, SoundModel *model, int b
 void PlayoutThread::run() {
 	
 	short dataBuf[bufferSize];
-std::cout << "playout\n";
 	while(isPlaying()) {
 		model->getSamples(dataBuf, bufferSize);
 		outputHandle->writeSamples(dataBuf, bufferSize);

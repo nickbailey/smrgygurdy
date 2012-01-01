@@ -18,7 +18,7 @@ class Keyboard : public Thread {
 	int myPort;
 	int keyboardId;
 	int keyboardPort;
-	
+	int announce;
 
 	/**
 	 * Creates a new ALSA sequencer client
@@ -45,8 +45,10 @@ class Keyboard : public Thread {
 		 * @param controller An instance of Controller class
 		 * @param keyId ALSA sequencer client id of the keyboard
 		 * @param keyPort Port number on the given client
+		 * @param verbosity Print note on/off announcement if > 0
 		 */
-		Keyboard(Controller* controller, int keyId, int keyPort);
+		Keyboard(Controller* controller, int keyId, int keyPort,
+		         int verbosity = 1);
 		
 		/**
 		 * Poll the MIDI keyboard for key events.

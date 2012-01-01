@@ -7,7 +7,9 @@
 #include <alsa/asoundlib.h>
 
 
-Keyboard::Keyboard(Controller *controller, int keyId, int keyPort) {
+Keyboard::Keyboard(Controller *controller, int keyId, int keyPort, int verbosity) :
+  announce(verbosity > 0)
+{
 
   this->controller = controller;
   this->keyboardId = keyId;
@@ -99,11 +101,14 @@ void Keyboard::midiAction() {
       
 		if (velocity != 0){
 			controller->keyEvent(false,note);
-			fprintf(stderr, "Note On %d with velocity %d \n",note,velocity);
-		}
-		else{
+			if (announce) {
+				fprintf(stderr, "Note On %d with velocity %d \n",note,velocity);
+			}
+		} else {
 			controller->keyEvent(true,note);
-			fprintf(stderr, "Note Off %d \n",note);
+			if (announce) {
+				fprintf(stderr, "Note Off %d \n",note);
+			}
 		}
       
       break; 
@@ -114,8 +119,9 @@ void Keyboard::midiAction() {
 
 		
 		controller->keyEvent(true,note);
-		fprintf(stderr, "Note Off %d \n",note); 
-        
+		if (announce) {
+			fprintf(stderr, "Note Off %d \n",note); 
+        	}
       break;        
     }
     snd_seq_free_event(event);

@@ -31,6 +31,7 @@ int main(int argc, char ** argv) {
 	// Check to see whether configuration file exists
 	string cfg_path(getenv("HOME"));
         cfg_path += "/.smrgygurdy";
+	string user_cfg_path(cfg_path); // always write changes here.
 	struct stat cfg_stat;
 	if (stat(cfg_path.c_str(), &cfg_stat) == -1) {
 		cerr << "Couldn't stat " << cfg_path <<
@@ -50,30 +51,32 @@ int main(int argc, char ** argv) {
 	Config cfg;
 	cfg.readFile(cfg_path.c_str());
 
-	string pcm;        cfg.lookupValue("pcm", pcm);
-	int bsize;         cfg.lookupValue("buffer_size", bsize);
-	int rate;          cfg.lookupValue("sample_rate", rate);
-	int poly;          cfg.lookupValue("polyphony", poly);
-	int noThreads;     cfg.lookupValue("threads", noThreads);
-	int keyboard_id;   cfg.lookupValue("midi.controller_id", keyboard_id);
-	int keyboard_port; cfg.lookupValue("midi.controller_port", keyboard_port);
+	string pcm;         cfg.lookupValue("pcm", pcm);
+	int bsize;          cfg.lookupValue("buffer_size", bsize);
+	int rate;           cfg.lookupValue("sample_rate", rate);
+	int poly;           cfg.lookupValue("polyphony", poly);
+	int noThreads;      cfg.lookupValue("threads", noThreads);
+	int keyboard_id;    cfg.lookupValue("midi.controller_id", keyboard_id);
+	int keyboard_port;  cfg.lookupValue("midi.controller_port", keyboard_port);
+	int verbosity;      cfg.lookupValue("verbosity", verbosity);
 
 	// Parse command line, perhaps changing configured values
 	static struct option long_options[] =  {
-	  {"alsa-device", required_argument, 0, 'd'},
-	  {"buffer-size", required_argument, 0, 'b'},
-	  {"sample-rate", required_argument, 0, 'r'},
-	  {"polyphony",   required_argument, 0, 'p'},
-	  {"threads",     required_argument, 0, 't'},
-	  {"midi-id",     required_argument, 0, 'M'},
-	  {"midi-port",   required_argument, 0, 'm'},
-	  {"help",        no_argument,       0, 'h'},
+	  {"alsa-device",  required_argument, 0, 'd'},
+	  {"buffer-size",  required_argument, 0, 'b'},
+	  {"sample-rate",  required_argument, 0, 'r'},
+	  {"polyphony",    required_argument, 0, 'p'},
+	  {"threads",      required_argument, 0, 't'},
+	  {"midi-id",      required_argument, 0, 'M'},
+	  {"midi-port",    required_argument, 0, 'm'},
+	  {"verbose",      optional_argument, 0, 'v'},
+	  {"help",         no_argument,       0, 'h'},
 	  {0, 0, 0, 0}
 	};
 	int c, option_index;
 	do {
 		c = getopt_long (argc, argv,
-				 "d:b:r:p:t:M:m:h",
+				 "d:b:r:p:t:M:m:v::h",
 		                 long_options, &option_index);
 		switch (c) {
 		    case 'd':
@@ -113,6 +116,10 @@ int main(int argc, char ** argv) {
 			break;
 		    case 'h':
 			exit (usage());
+		    case 'v':
+			verbosity = 1;
+			if (optarg > 0) verbosity = atoi(optarg);
+			cfg.lookup("verbosity") = verbosity;
 		    case '?':
 			// getopt_long already printed an error message
 			break;
@@ -135,7 +142,6 @@ int main(int argc, char ** argv) {
 	cout << "extra = " << extra << endl;
 
 	for(int i = 0; i < noThreads; i++) {
-
 		int models = perThread;
 		if(i < extra) models++;
 		cout << "Assigning " << models << " models to a thread" << endl;
@@ -155,14 +161,14 @@ int main(int argc, char ** argv) {
 	controller.start();
 
 	// Create Keyboard
-	Keyboard keyboard(&controller, keyboard_id, keyboard_port);
+	Keyboard keyboard(&controller, keyboard_id, keyboard_port, verbosity);
 	keyboard.start();
 
 	// Create Pedal
 #ifdef SUPPORT_MINILAB1008
 	MiniLAB1008 pedal(&controller);
 #else
-	Comedi pedal(&controller);
+	Comedi pedal(&controller, 0.01, verbosity);
 #endif
 	pedal.start();
 
@@ -190,7 +196,7 @@ int main(int argc, char ** argv) {
 
 	    }
 	}
-	cfg.writeFile(cfg_path.c_str());
+	cfg.writeFile(user_cfg_path.c_str());
 	return 0;	
 }
 

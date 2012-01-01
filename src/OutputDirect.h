@@ -20,7 +20,8 @@
  */
 class OutputDirect : public OutputSink {
 
-	snd_pcm_t *playbackHandle; /* Handle for alsa PCM */
+	snd_pcm_t *playbackHandle; ///< Handle for alsa PCM
+	int underrunning;         ///< State variable for underrun reporting
 	
 	/**
 	 * Open a pcm, returns playback handle for pcm
@@ -68,6 +69,21 @@ class OutputDirect : public OutputSink {
 	 * Close the audio system, will wait for sound to finish
  	 */
 	virtual void close();
+
+	protected:
+
+	/**
+	 * Report buffer underruns, but only once
+	 *
+	 * The system won't ever recover from an underrun if it's
+	 * spending extra CPU effort telling the user about them,
+	 * so print the error message once when the first occurs,
+	 * then keep quiet unless a non-underrunning write has
+	 * succeeded.
+	 */
+	void reportUnderrun(void);
+
+	public:
 
 	/* Exception List */
 

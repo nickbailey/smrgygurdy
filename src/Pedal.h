@@ -5,27 +5,15 @@
 #include "Lock.h"
 #include "Controller.h"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <asm/types.h>
-#include <stdbool.h>
-
-#include <libhid/pmd.h>
-#include <libhid/minilab-1008.h>
-
 /**
- * Provides an interface for the minilab 1008 ADC.
+ * Provides an abstract pedal interface.
+
  * The Analogue to Digital Converter receives a voltage level from the pedal, from which a discrete value is calculated. This can then be read by polling the device.
  */
 class Pedal : public Thread {
 	
  public:
-     explicit Pedal(Controller *c);
+     explicit Pedal(Controller *c, double eps = 0.01);
  
     /** 
      * Method invoked when the thread begins to poll the pedal.
@@ -41,6 +29,7 @@ class Pedal : public Thread {
 
  protected:
     Controller *controller;
-    double value;
+    double value;	///< Current normalised pedal value
+    double epsilon;	///< Minimum chage in value which triggers an event
 };
 #endif /*PEDAL_H*/
