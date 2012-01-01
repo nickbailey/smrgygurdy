@@ -16,7 +16,7 @@ AC_PROG_CC
 AC_PROG_INSTALL
 
 # Checks for header files.
-AC_CHECK_HEADERS([fcntl.h stdlib.h string.h sys/time.h unistd.h sys/types.h sys/stat.h])
+AC_CHECK_HEADERS([fcntl.h stdlib.h string.h sys/time.h unistd.h sys/types.h sys/stat.h getopt.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
