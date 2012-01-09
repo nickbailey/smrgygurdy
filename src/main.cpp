@@ -62,6 +62,7 @@ int main(int argc, char ** argv) {
 	int keyboard_port;  cfg.lookupValue("midi.controller_port", keyboard_port);
 	double output_gain; cfg.lookupValue("model.output_gain", output_gain);
 	double v_bow_max;   cfg.lookupValue("model.bow_speed_max", v_bow_max);
+	double v_bow_min;   cfg.lookupValue("model.bow_speed_min", v_bow_min);
 	int verbosity;      cfg.lookupValue("verbosity", verbosity);
 
 	// Parse command line, perhaps changing configured values
@@ -76,6 +77,7 @@ int main(int argc, char ** argv) {
 	  {"midi-port",    required_argument, 0, 'm'},
 	  {"output-gain",  required_argument, 0, 'g'},
 	  {"bow-speed-max",required_argument, 0, 'S'},
+	  {"bow-speed-min",required_argument, 0, 'S'},
 	  {"list-midi",    no_argument,       0, 'l'},
 	  {"verbose",      optional_argument, 0, 'v'},
 	  {"help",         no_argument,       0, 'h'},
@@ -84,7 +86,7 @@ int main(int argc, char ** argv) {
 	int c, option_index;
 	do {
 		c = getopt_long (argc, argv,
-				 "d:P:b:r:p:t:M:m:g:S:lv::h",
+				 "d:P:b:r:p:t:M:m:g:S:s:lv::h",
 		                 long_options, &option_index);
 		switch (c) {
 		    case 'd':
@@ -134,8 +136,13 @@ int main(int argc, char ** argv) {
 			break;
 		    case 'S':
 			v_bow_max = atof(optarg);
-			cfg.lookup("mode.bow_speed_max") = v_bow_max;
+			cfg.lookup("model.bow_speed_max") = v_bow_max;
 			cout << "Bow speed (full pedal) set to " << v_bow_max <<endl;
+			break;
+		    case 's':
+			v_bow_min = atof(optarg);
+			cfg.lookup("model.bow_speed_min") = v_bow_min;
+			cout << "Bow speed (no pedal) set to " << v_bow_min << endl;
 			break;
 		    case 'l':
 			exit (system("aconnect -lo"));
@@ -182,7 +189,7 @@ int main(int argc, char ** argv) {
 	}
 
 	// Create Controller
-	Controller controller(mainModel, 0.15 /*fixme*/, v_bow_max);
+	Controller controller(mainModel, v_bow_min, v_bow_max);
 	controller.start();
 
 	// Create Keyboard
@@ -242,6 +249,15 @@ int main(int argc, char ** argv) {
 		controller.max_speed = v_bow_max;
 		controller.speedChange(pedal->get_value());
 		cfg.lookup("model.bow_speed_max") = v_bow_max;
+		break;
+
+	      case 's':
+		cout << "Current bow speed (nol pedal) = " << v_bow_min << endl
+		     << "New value? ";
+		cin >> v_bow_min;
+		controller.min_speed = v_bow_min;
+		controller.speedChange(pedal->get_value());
+		cfg.lookup("model.bow_speed_min") = v_bow_min;
 		break;
 
 	      case EOF:      break;
