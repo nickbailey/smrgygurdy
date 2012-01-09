@@ -12,13 +12,13 @@
  */
 class SoundModelPoly : public SoundModel {
 
-	std::vector<SoundModel*> soundModelList;
-	int	lastSoundModel;
-	int	soundModelNo;
-	
-	public:
+	protected:
+		std::vector<SoundModel*> soundModelList;
+		int	lastSoundModel;
+		int	soundModelNo;
+		double  gain;
 
-	
+	public:
 		/**
 		 * Create a new instance of SoundModelPoly
 		 *
@@ -29,9 +29,15 @@ class SoundModelPoly : public SoundModel {
 		 * to be rendered by a single thread, but having note and
 		 * pedal data controlled from a central instance.
 		 * 
-		 * @param soundModelList Vector containing list of models to be contained within the instance
+		 * @param soundModelList
+		 * Vector containing list of models to be contained within
+		 * the instance.
+		 * @param output_gain
+		 * (optional) Multiply model outputs by this to yield the
+		 * final result
 		 */
-		SoundModelPoly(std::vector<SoundModel*> soundModelList);
+		SoundModelPoly(std::vector<SoundModel*> soundModelList,
+		               double output_gain=0.2);
 
 		/**
 		 * Create a SoundModelPoly with a number of SoundModelMonos
@@ -40,8 +46,24 @@ class SoundModelPoly : public SoundModel {
 		 * which creates a given number of monophonic sound sources
 		 *
 		 * @param poly The numer of monophonic sound models to create
+		 * @param output_gain
+		 * (optional) Multiply model outputs by this to yield the
+		 * final result
 		 */
-		SoundModelPoly(int poly);
+		SoundModelPoly(int poly, double output_gain=0.2);
+
+		/**
+		 * Set the output gain
+		 *
+		 * The polyphonic model sums the output from a number of
+		 * monophonic string models. The result is multiplied by
+		 * the output gain. This exposes a method to control the
+		 * gain which should be used, for example, to prevent clipping
+		 * in the event that a larger number of strings is deployed.
+		 *
+		 * @param output_gain Value to set for the output gain
+		 */
+		virtual void setOutputGain(double output_gain);
 
 		/**
 		 * Start a note playing. 

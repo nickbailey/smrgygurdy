@@ -107,9 +107,13 @@ class Controller: public Thread{
 
   /**
    * Access the current physical bow speed
+   *
+   * @return
+   * The current physical speed of the bow supplied to the physical
+   * model in m/s.
    */
   double get_bow_speed() const { return speed; }
- private:
+
   double max_speed; ///< maximum bow speed (pedal = 1.0)
   double min_speed; ///< minumum bow speed (pedal = 0.0)
 };

@@ -12,15 +12,11 @@
 #include "PlayoutThread.h"
 #include "Pedal.h"
 #include "OutputMixer.h"
-
-// Include header files for pedal hardware
 #ifdef SUPPORT_MINILAB1008
 #include "MiniLAB1008.h"
-#endif
-#ifdef SUPPORT_COMEDI
+#else
 #include "Comedi.h"
 #endif
-
 #include "Controller.h"
 #include "Keyboard.h"
 
@@ -28,7 +24,7 @@
 using namespace std;
 using namespace libconfig;
 
-int usage(const char*);
+int usage(void);
 
 int main(int argc, char ** argv) {
 
@@ -56,7 +52,6 @@ int main(int argc, char ** argv) {
 	cfg.readFile(cfg_path.c_str());
 
 	string pcm;         cfg.lookupValue("pcm", pcm);
-	string pedal_dev;   cfg.lookupValue("pedal", pedal_dev);
 	int bsize;          cfg.lookupValue("buffer_size", bsize);
 	int rate;           cfg.lookupValue("sample_rate", rate);
 	int poly;           cfg.lookupValue("polyphony", poly);
@@ -68,7 +63,6 @@ int main(int argc, char ** argv) {
 	// Parse command line, perhaps changing configured values
 	static struct option long_options[] =  {
 	  {"alsa-device",  required_argument, 0, 'd'},
-	  {"pedal-device", required_argument, 0, 'P'},
 	  {"buffer-size",  required_argument, 0, 'b'},
 	  {"sample-rate",  required_argument, 0, 'r'},
 	  {"polyphony",    required_argument, 0, 'p'},
@@ -76,25 +70,19 @@ int main(int argc, char ** argv) {
 	  {"midi-id",      required_argument, 0, 'M'},
 	  {"midi-port",    required_argument, 0, 'm'},
 	  {"verbose",      optional_argument, 0, 'v'},
-	  {"list-midi",    no_argument,       0, 'l'},
 	  {"help",         no_argument,       0, 'h'},
 	  {0, 0, 0, 0}
 	};
 	int c, option_index;
 	do {
 		c = getopt_long (argc, argv,
-				 "d:P:b:r:p:t:M:m:v::lh",
+				 "d:b:r:p:t:M:m:v::h",
 		                 long_options, &option_index);
 		switch (c) {
 		    case 'd':
 			pcm = optarg;
 			cfg.lookup("pcm") = pcm;
 			cout << "Using alsa device \"" << pcm << "\"" << endl;
-			break;
-		    case 'P':
-			pedal_dev = optarg;
-			cfg.lookup("pedal") = pedal_dev;
-			cout << "Using pedal device \"" << pedal_dev << "\"" << endl;
 			break;
 		    case 'b':
 			bsize = atoi(optarg);
@@ -127,9 +115,7 @@ int main(int argc, char ** argv) {
 			cout << "Midi controller uses port " << keyboard_port << endl;
 			break;
 		    case 'h':
-			exit (usage(argv[0]));
-		    case 'l':
-			exit (system("aconnect -i"));
+			exit (usage());
 		    case 'v':
 			verbosity = 1;
 			if (optarg > 0) verbosity = atoi(optarg);
@@ -179,22 +165,12 @@ int main(int argc, char ** argv) {
 	keyboard.start();
 
 	// Create Pedal
-	Pedal *pedal = NULL;
 #ifdef SUPPORT_MINILAB1008
-	if (pedal_dev == "minilab1080")
-		pedal = new MiniLAB1008(&controller);
+	MiniLAB1008 pedal(&controller);
+#else
+	Comedi pedal(&controller, 0.01, verbosity);
 #endif
-#ifdef SUPPORT_COMEDI
-	if (pedal_dev.compare("comedi") == 0)
-		pedal = new Comedi(&controller, 0.01, verbosity);
-#endif
-	if (pedal) {
-		pedal->start();
-	} else {
-		cerr << "Fatal: Requested pedal hardware is unsupported"
-		     << endl;
-		exit(-1);
-	}
+	pedal.start();
 
 
 	// Console interaction
@@ -207,7 +183,7 @@ int main(int argc, char ** argv) {
 	      case 'c':
 	        cout << "Bowing at " << controller.get_bow_speed() <<
                         "m/s because pedal value is " <<
-	                pedal->get_value() << endl; 
+	                pedal.get_value() << endl; 
 	        break;
 
 
@@ -221,29 +197,11 @@ int main(int argc, char ** argv) {
 	    }
 	}
 	cfg.writeFile(user_cfg_path.c_str());
-	delete pedal;
 	return 0;	
 }
 
-int usage(const char* cmd)
+int usage(void)
 {
-	cout << "Usage: " << cmd << " [options]" << endl;
-	cout << "Options:" << endl;
-	cout << "\t--alsa-device=dev | -ddev:      Set audio output stream" << endl;
-	cout << "\t--pedal-device=class | -Pclass: Set pedal device class" << endl;
-	cout << "\t\tSupported classes: comedi; minilab1080" << endl;
-	cout << "\t--buffer-size=size | -bsize:    Set audio buffer length to size" << endl;
-	cout << "\t--sample-rate=rate | -rrate:    Set audio sample rate in Hz" << endl;
-	cout << "\t--polyphony=voices | -pvoices:  Set max number of sounding voices" << endl;
-	cout << "\t--threads=thrds | -ttrhds:      Use thrds threads for synthesis" << endl;
-	cout << "\t--midi-id=id | -Mid:            Set midi controller to id" << endl;
-	cout << "\t--midi-port=port | -mport:      Set midi controller port" << endl;
-	cout << "\t--verbose[=level] | -v[level]:  Set verbosity" << endl;
-	cout << "\t\t0 = miniumum errors only;" << endl;
-	cout << "\t\t1 = report midi note on/off;" << endl;
-	cout << "\t\t2 = also report changes of pedal value" << endl;
-	cout << "\t--list-midi | -l:               List midi input devices and exit" << endl;
-	cout << "\t--help | -h:                    Print usage and exit" << endl;
 	return 0;
 }
 

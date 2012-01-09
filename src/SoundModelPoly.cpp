@@ -3,21 +3,37 @@
 #include <cstring>
 #include <vector>
 
-/* All samples will be multiplied by this constant to avoid clipping */
-#define MIX_MULTIPLIER 0.2 /* TODO: This needs to be centralised better */
 
-SoundModelPoly::SoundModelPoly(std::vector<SoundModel*> soundModelList) {
+SoundModelPoly::SoundModelPoly(std::vector<SoundModel*> soundModelList,
+                               double output_gain) {
 
 	this->soundModelList = soundModelList;
 
 	if(soundModelList.size() == 0)
 		throw new NoSoundModelException();
 
+	setOutputGain(output_gain);
+
 }
 
-SoundModelPoly::SoundModelPoly(int poly) {
+SoundModelPoly::SoundModelPoly(int poly, double output_gain) {
 	for (int i = 0; i < poly; i++) {
 		soundModelList.push_back(new SoundModelMono);
+	}
+	setOutputGain(output_gain);
+}
+
+void SoundModelPoly::setOutputGain(double output_gain) {
+	gain = output_gain;
+
+	// tell all agregated SoundModelPoly's the gain's changed
+	// (SoundModelMonos should ingore this virtual method invocation)
+
+	for(std::vector<SoundModel*>::iterator sndModIterator =
+	        soundModelList.begin();
+	    sndModIterator != soundModelList.end();
+	    sndModIterator++) {
+		(*sndModIterator)->setOutputGain(gain);
 	}
 }
 
@@ -40,39 +56,56 @@ void SoundModelPoly::setNoteOn(int semitone) {
 
 void SoundModelPoly::setNoteOff(int semitone) {
 
-	for(unsigned int i = 0; i < soundModelList.size(); i++)
-		soundModelList[i]->setNoteOff(semitone);
+	for(std::vector<SoundModel*>::iterator sndModIterator =
+	        soundModelList.begin();
+	    sndModIterator != soundModelList.end();
+	    sndModIterator++) {
+		(*sndModIterator)->setNoteOff(semitone);
+	}
 }
 
 void SoundModelPoly::setPedalSpeed(double speed) {
 
 	/* Need to send to all sub-soundModels */
-	for(unsigned int i = 0; i < soundModelList.size(); i++) {
-
-		soundModelList[i]->setPedalSpeed(speed);
+	for(std::vector<SoundModel*>::iterator sndModIterator =
+	        soundModelList.begin();
+	    sndModIterator != soundModelList.end();
+	    sndModIterator++) {
+		(*sndModIterator)->setPedalSpeed(speed);
 	}
 }
 
 bool SoundModelPoly::isPlaying() {
 
-
-	for(unsigned int i = 0; i < soundModelList.size(); i++)
-		if(soundModelList[i]->isPlaying()) return true;
+	for(std::vector<SoundModel*>::iterator sndModIterator =
+	        soundModelList.begin();
+	    sndModIterator != soundModelList.end();
+	    sndModIterator++) {
+		if((*sndModIterator)->isPlaying()) return true;
+	}
 
 	return false;
 }
 
-void SoundModelPoly::getSamples(short samples[], int bufferSize) {
+void SoundModelPoly::getSamples(short samples[], const int bufferSize) {
 
-	short *temp = new short[bufferSize];
-	memset(samples, 0, bufferSize*sizeof(short));
+	short temp[bufferSize];
+	int accumulator[bufferSize];
+	memset(accumulator, 0, bufferSize*sizeof(int));
 
-	for(unsigned int i = 0; i < soundModelList.size(); i++) {
-		soundModelList[i]->getSamples(temp, bufferSize);
-		for(int j = 0; j < bufferSize; j++)
-			samples[j] += temp[j] * MIX_MULTIPLIER;
+	int i;
+
+	for(std::vector<SoundModel*>::iterator sndModIterator =
+	        soundModelList.begin();
+	    sndModIterator != soundModelList.end();
+	    sndModIterator++) {
+		(*sndModIterator)->getSamples(temp, bufferSize);
+		for (i = 0; i < bufferSize; i++) {
+			accumulator[i] += temp[i];
+		}
 	}
 
-	delete[] temp;
+	for(i = 0; i < bufferSize; i++)
+		samples[i] = accumulator[i] * gain;
 }
 

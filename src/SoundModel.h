@@ -9,6 +9,18 @@ class SoundModel {
 	public:
 
 		/**
+		 * If the subclass supports it, set the output gain
+		 * Currently, the gain is applied in the derived class
+		 * SoundModelPoly, so that each thread can accumulate
+		 * audio data and perform only one multiply.
+		 *
+		 * @param output_gain
+		 * The multiplier to which all output samples are
+		 * subjected.
+		 */
+		virtual void setOutputGain(double output_gain) { };
+
+		/**
 		 * Set that a note should begin playing, may turn off currently playing notes if maximum polyphony is exceeded
 		 *
 		 * @param semitone The semitone value of the activated key (0-127)
