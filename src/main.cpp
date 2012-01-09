@@ -61,6 +61,7 @@ int main(int argc, char ** argv) {
 	int keyboard_id;    cfg.lookupValue("midi.controller_id", keyboard_id);
 	int keyboard_port;  cfg.lookupValue("midi.controller_port", keyboard_port);
 	double output_gain; cfg.lookupValue("model.output_gain", output_gain);
+	double v_bow_max;   cfg.lookupValue("model.bow_speed_max", v_bow_max);
 	int verbosity;      cfg.lookupValue("verbosity", verbosity);
 
 	// Parse command line, perhaps changing configured values
@@ -74,6 +75,8 @@ int main(int argc, char ** argv) {
 	  {"midi-id",      required_argument, 0, 'M'},
 	  {"midi-port",    required_argument, 0, 'm'},
 	  {"output-gain",  required_argument, 0, 'g'},
+	  {"bow-speed-max",required_argument, 0, 'S'},
+	  {"list-midi",    no_argument,       0, 'l'},
 	  {"verbose",      optional_argument, 0, 'v'},
 	  {"help",         no_argument,       0, 'h'},
 	  {0, 0, 0, 0}
@@ -81,7 +84,7 @@ int main(int argc, char ** argv) {
 	int c, option_index;
 	do {
 		c = getopt_long (argc, argv,
-				 "d:P:b:r:p:t:M:m:g:v::h",
+				 "d:P:b:r:p:t:M:m:g:S:lv::h",
 		                 long_options, &option_index);
 		switch (c) {
 		    case 'd':
@@ -129,6 +132,13 @@ int main(int argc, char ** argv) {
 			cfg.lookup("model.output_gain") = output_gain;
 			cout << "Output gain set to " << output_gain << endl;
 			break;
+		    case 'S':
+			v_bow_max = atof(optarg);
+			cfg.lookup("mode.bow_speed_max") = v_bow_max;
+			cout << "Bow speed (full pedal) set to " << v_bow_max <<endl;
+			break;
+		    case 'l':
+			exit (system("aconnect -lo"));
 		    case 'h':
 			exit (usage());
 		    case 'v':
@@ -172,7 +182,7 @@ int main(int argc, char ** argv) {
 	}
 
 	// Create Controller
-	Controller controller(mainModel);
+	Controller controller(mainModel, 0.15 /*fixme*/, v_bow_max);
 	controller.start();
 
 	// Create Keyboard
@@ -203,13 +213,18 @@ int main(int argc, char ** argv) {
 
 	cout << "Enter Q to quit" << endl;
 	cout << "      C to report stats" << endl;
+	cout << "      G to set output gain" << endl;
+	cout << "      S/Shift-S to set bow speed (no/full pedal)" << endl;
 
 	while( (c = getchar()) != 'q') {
 	    switch (c) {
 	      case 'c':
-	        cout << "Bowing at " << controller.get_bow_speed() <<
-                        "m/s because pedal value is " <<
-	                pedal->get_value() << endl; 
+	        cout << "Bowing at " << controller.get_bow_speed()
+                     << "m/s because pedal value is "
+	             << pedal->get_value() << endl;
+		cout << "Bow speed limits: " << controller.min_speed
+		     << "..." << controller.max_speed << endl;
+		cout << "Output gain: " << output_gain << endl;
 	        break;
 
 	      case 'g':
@@ -218,7 +233,16 @@ int main(int argc, char ** argv) {
 		cin >> output_gain;
 		mainModel->setOutputGain(output_gain);
 		cfg.lookup("model.output_gain") = output_gain;
-		break; 
+		break;
+
+	      case 'S':
+		cout << "Current bow speed (full pedal) = " << v_bow_max << endl
+		     << "New value? ";
+		cin >> v_bow_max;
+		controller.max_speed = v_bow_max;
+		controller.speedChange(pedal->get_value());
+		cfg.lookup("model.bow_speed_max") = v_bow_max;
+		break;
 
 	      case EOF:      break;
 	      case '\n':     break;
