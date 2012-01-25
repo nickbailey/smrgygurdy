@@ -1,17 +1,15 @@
 #include "OutputDirect.h"
 #include <string>
-#include <iostream>
 #include <alsa/asoundlib.h>
 #include <poll.h>
+#include <iostream>
 
 #define CHANNELS 1 
 
 OutputDirect::OutputDirect(std::string pcmName, unsigned int periodSize, unsigned int rate) :
     underrunning(false)
 {
-
 	playbackHandle = openPcm(pcmName, periodSize, rate);
-
 }
 
 snd_pcm_t * OutputDirect::openPcm(std::string pcmName, unsigned int periodSize, unsigned int rate) {
@@ -31,13 +29,15 @@ snd_pcm_t * OutputDirect::openPcm(std::string pcmName, unsigned int periodSize, 
     snd_pcm_hw_params_set_rate_near(playbackHandle, hardwareParams, &rate, 0);
     snd_pcm_hw_params_set_channels(playbackHandle, hardwareParams, CHANNELS);
     snd_pcm_hw_params_set_periods(playbackHandle, hardwareParams, 1, 0);
-    snd_pcm_hw_params_set_period_size(playbackHandle, hardwareParams, periodSize/2, 0);
+    snd_pcm_hw_params_set_period_size(playbackHandle, hardwareParams, periodSize, 0);
+    snd_pcm_uframes_t bufsize = periodSize * 2;
+    snd_pcm_hw_params_set_buffer_size_near(playbackHandle, hardwareParams, &bufsize);
     snd_pcm_hw_params(playbackHandle, hardwareParams);
 
     snd_pcm_sw_params_t *softwareParams;
     snd_pcm_sw_params_alloca(&softwareParams);
     snd_pcm_sw_params_current(playbackHandle, softwareParams);
-    snd_pcm_sw_params_set_avail_min(playbackHandle, softwareParams, periodSize/2);
+    snd_pcm_sw_params_set_avail_min(playbackHandle, softwareParams, periodSize);
     snd_pcm_sw_params(playbackHandle, softwareParams);
 
     return(playbackHandle);
@@ -49,7 +49,6 @@ OutputDirect::~OutputDirect() {
 }
 
 void OutputDirect::writeSamples(short buffer[], int length) {
-
 	while((snd_pcm_writei(playbackHandle, buffer, length)) < length) {
 				
 		// Buffer XRUN occured here

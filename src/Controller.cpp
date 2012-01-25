@@ -4,7 +4,7 @@
 #include "Lock.h"
 #include "Thread.h"
 #include <string>
-#include <iostream>
+//#include <iostream>
 
 Controller::Controller(SoundModel *playout,
                        double speed_min,

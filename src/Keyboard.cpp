@@ -106,7 +106,7 @@ void Keyboard::midiAction() {
 			}
 		} else {
 			controller->keyEvent(true,note);
-			if (announce) {
+			if (announce && note != 0) {
 				fprintf(stderr, "Note Off %d \n",note);
 			}
 		}
@@ -119,7 +119,7 @@ void Keyboard::midiAction() {
 
 		
 		controller->keyEvent(true,note);
-		if (announce) {
+		if (announce && note != 0) {
 			fprintf(stderr, "Note Off %d \n",note); 
         	}
       break;        

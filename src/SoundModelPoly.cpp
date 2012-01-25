@@ -2,7 +2,7 @@
 #include "SoundModelMono.h"
 #include <cstring>
 #include <vector>
-
+//#include <iostream>
 
 SoundModelPoly::SoundModelPoly(std::vector<SoundModel*> soundModelList,
                                double output_gain) {
@@ -50,8 +50,6 @@ void SoundModelPoly::setNoteOn(int semitone) {
 	/* Only gets invoked if all contained models are playing */
 	(++lastSoundModel) %= soundModelList.size();
 	soundModelList[lastSoundModel]->setNoteOn(semitone);
-
-
 }
 
 void SoundModelPoly::setNoteOff(int semitone) {

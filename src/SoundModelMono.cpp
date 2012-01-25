@@ -50,7 +50,6 @@ bool SoundModelMono::isPlaying() {
 }
 
 void SoundModelMono::setNoteOn(int semitone) {
-
 	lock.acquire();
 
 	if(noteOn == false || currentNote != semitone) {
@@ -62,7 +61,8 @@ void SoundModelMono::setNoteOn(int semitone) {
 			currentNote = semitone;
 
 		} catch (const char* e) {
-			std::cout << "Semitone out of range!" << std::endl;
+			std::cout << "Semitone " << semitone
+			          << " out of range!" << std::endl;
 		}
 	}
 

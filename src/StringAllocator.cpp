@@ -6,10 +6,10 @@
 StringAllocator::StringAllocator(): 
 
 	bowRatioFromBridge(0.07),
-	bowForce(0.7), //was 9.5
-	vGString(45), /* TODO: Get the real value for this - semitone value of lowest string on violin */
+	bowForce(2.0),
+	vGString(36), /* TODO: Get the real value for this - semitone value of lowest string on violin */
 	stringSpace(7),
-	violin() {
+	violin(5) { // 5 means 'cello (?!?)
 
 	this->bowSpeed = 0;
 	this->stringNo = 0;
