@@ -8,13 +8,16 @@
 
 Controller::Controller(SoundModel *playout,
                        double speed_min,
-                       double speed_max) :
+                       double speed_max,
+                       double autofade_point) :
 	isPlaying(true), pedalTriggered(false),
 	noteQueue(),
-	speed(speed_max), max_speed(speed_max), min_speed(speed_min)
+	speed(speed_max), autofade(autofade_point),
+	max_speed(speed_max), min_speed(speed_min)
 {
 	playout->setPedalSpeed(speed);
 	this->playout = playout;
+	default_output_gain = playout->getOutputGain();
 }
 
 Controller::~Controller(){
@@ -75,6 +78,15 @@ void Controller::speedChange(double spd){
 	speed = min_speed + spd*(max_speed - min_speed);
 	pedalTriggered = true;
 	pedalLock.release();
+
+	// If the pedal speed has moved below the autofade point,
+	// adjust the SoundModel's output gain accordingly
+
+	if (spd < autofade) {
+		const double gain = default_output_gain * (spd/autofade);
+		playout->setOutputGain(gain);
+	}
+
 	outputLock.acquire();
 	outputLock.broadcast();
 	outputLock.release();

@@ -62,6 +62,7 @@ int main(int argc, char ** argv) {
 	int keyboard_id;    cfg.lookupValue("midi.controller_id", keyboard_id);
 	int keyboard_port;  cfg.lookupValue("midi.controller_port", keyboard_port);
 	double output_gain; cfg.lookupValue("model.output_gain", output_gain);
+	double autofade;    cfg.lookupValue("model.autofade_point", autofade);
 	double v_bow_max;   cfg.lookupValue("model.bow_speed_max", v_bow_max);
 	double v_bow_min;   cfg.lookupValue("model.bow_speed_min", v_bow_min);
 	int verbosity;      cfg.lookupValue("verbosity", verbosity);
@@ -69,6 +70,7 @@ int main(int argc, char ** argv) {
 	// Parse command line, perhaps changing configured values
 	static struct option long_options[] =  {
 	  {"alsa-device",  required_argument, 0, 'd'},
+	  {"autofade",     required_argument, 0, 'a'},
 	  {"pedal-device", required_argument, 0, 'P'},
 	  {"buffer-size",  required_argument, 0, 'b'},
 	  {"sample-rate",  required_argument, 0, 'r'},
@@ -94,6 +96,12 @@ int main(int argc, char ** argv) {
 			pcm = optarg;
 			cfg.lookup("pcm") = pcm;
 			cout << "Using alsa device \"" << pcm << "\"" << endl;
+			break;
+		    case 'a':
+			autofade = atof(optarg);
+			cfg.lookup("model.autofade") = autofade;
+			cout << "Fade out below pedal = " << autofade
+			     << "\"" << endl;
 			break;
 		    case 'P':
 			pedal_dev = optarg;
@@ -190,7 +198,7 @@ int main(int argc, char ** argv) {
 	}
 
 	// Create Controller
-	Controller controller(mainModel, v_bow_min, v_bow_max);
+	Controller controller(mainModel, v_bow_min, v_bow_max, autofade);
 	controller.start();
 
 	// Create Keyboard
@@ -281,6 +289,7 @@ int usage(void)
         cout << "\t--alsa-device=dev | -ddev:      Set audio output stream" << endl;
         cout << "\t--pedal-device=class | -Pclass: Set pedal device class" << endl;
         cout << "\t        Supported classes: comedi; minilab1080" << endl;
+	cout << "\t                           dummy (fixed value 0.75)" << endl;
         cout << "\t--buffer-size=size | -bsize:    Set audio buffer length to size" << endl;
         cout << "\t--sample-rate=rate | -rrate:    Set audio sample rate in Hz" << endl;
         cout << "\t--polyphony=voices | -pvoices:  Set max number of sounding voices" << endl;

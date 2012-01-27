@@ -58,8 +58,11 @@ class Controller: public Thread{
   //Stores last pedal speed sent by pedal.
   double speed;
 
+  //Pedal value below which the sound model is told to fade out
+  double autofade;
 
-
+  //Default gain of the SoundModel (adjusted by autofading)
+  double default_output_gain;
  public:
 
   /**
@@ -68,9 +71,12 @@ class Controller: public Thread{
    *@param playout Soundmodel to which controller passes signals.
    *@param speed_min Bow speed minimum pedal value (0)
    *@param speed_max Bow speed for max pedal value (1.0)
+   *@param autofade_point If > 0, the gain the SoundModel's output gain
+   *                 is adjusted to fade to silence as the pedal reaches 0.
    */
   Controller(SoundModel *playout,
-             double speed_min = 0.15, double speed_max = 1.6);
+             double speed_min = 0.15, double speed_max = 1.6,
+             double autofade_point = 0);
 
   /**
    *Called when a controller object is destroyed.

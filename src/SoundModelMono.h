@@ -70,6 +70,12 @@ class SoundModelMono : public SoundModel {
  		 */
 		virtual void setPedalSpeed(double speed);
 
+		/**
+		 * Return the current gain. For a mono sound model,
+		 * there is no polyphonic mixing so the gain is always 1.0
+		 *
+		 */
+		virtual double getOutputGain(void) { return 1.0; }
 };
 
 #endif /* SOUND_MODEL_H */

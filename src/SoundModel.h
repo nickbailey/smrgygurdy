@@ -6,6 +6,10 @@
  */
 class SoundModel {
 
+
+	protected:
+		double gain;
+
 	public:
 
 		/**
@@ -19,6 +23,11 @@ class SoundModel {
 		 * subjected.
 		 */
 		virtual void setOutputGain(double output_gain) { };
+
+		/**
+		 * Get the current output gain
+		 */
+		virtual double getOutputGain(void) = 0;
 
 		/**
 		 * Set that a note should begin playing, may turn off currently playing notes if maximum polyphony is exceeded

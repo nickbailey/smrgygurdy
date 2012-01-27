@@ -16,7 +16,6 @@ class SoundModelPoly : public SoundModel {
 		std::vector<SoundModel*> soundModelList;
 		int	lastSoundModel;
 		int	soundModelNo;
-		double  gain;
 
 	public:
 		/**
@@ -65,6 +64,10 @@ class SoundModelPoly : public SoundModel {
 		 */
 		virtual void setOutputGain(double output_gain);
 
+		/**
+		 * Get the output gain
+		 */
+		virtual double getOutputGain(void) { return gain; }
 		/**
 		 * Start a note playing. 
 		 *
