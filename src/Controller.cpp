@@ -81,10 +81,11 @@ void Controller::speedChange(double spd){
 
 	// If the pedal speed has moved below the autofade point,
 	// adjust the SoundModel's output gain accordingly
+	// (spd is the pedal postion between 0 and 1)
 
 	if (spd < autofade) {
 		const double gain = default_output_gain * (spd/autofade);
-		playout->setOutputGain(gain);
+		playout->setOutputGain(gain > 0.0 ? gain : 0.0);
 	}
 
 	outputLock.acquire();
