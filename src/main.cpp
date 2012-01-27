@@ -18,6 +18,7 @@
 #ifdef SUPPORT_COMEDI
 #include "Comedi.h"
 #endif
+#include "DummyPedal.h"
 #include "Controller.h"
 #include "Keyboard.h"
 
@@ -199,13 +200,15 @@ int main(int argc, char ** argv) {
 	// Create Pedal
 	Pedal *pedal = NULL;
 #ifdef SUPPORT_MINILAB1008
-	if (!(pedal_dev.compare("minilab1080")))
+	if (!pedal_dev.compare("minilab1080"))
 		pedal = new MiniLAB1008(&controller);
 #endif
 #ifdef SUPPORT_COMEDI
-	if (!(pedal_dev.compare("comedi")))
+	if (!pedal_dev.compare("comedi"))
 		pedal = new Comedi(&controller, 0.01, verbosity);
 #endif
+	if (!pedal_dev.compare("dummy"))
+		pedal = new DummyPedal(&controller);
 
 	if (!pedal) {
 		cerr << "Fatal: No compiled-in support for pedal device \"" <<

@@ -8,7 +8,8 @@ smrgygurdy_SOURCES = \
         Pedal.cpp \
         Keyboard.cpp \
         Lock.cpp Thread.cpp \
-        main.cpp Controller.cpp
+        main.cpp Controller.cpp \
+	DummyPedal.cpp
 
 EXTRA_smrgygurdy_SOURCES = MiniLAB1080.cpp Comedi.cpp
 

@@ -7,7 +7,7 @@
 
 /**
  * Provides an abstract pedal interface.
-
+ *
  * The Analogue to Digital Converter receives a voltage level from the pedal, from which a discrete value is calculated. This can then be read by polling the device.
  */
 class Pedal : public Thread {
@@ -30,6 +30,6 @@ class Pedal : public Thread {
  protected:
     Controller *controller;
     double value;	///< Current normalised pedal value
-    double epsilon;	///< Minimum chage in value which triggers an event
+    double epsilon;	///< Minimum change in value which triggers an event
 };
 #endif /*PEDAL_H*/
