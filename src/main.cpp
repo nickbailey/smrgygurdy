@@ -89,7 +89,7 @@ int main(int argc, char ** argv) {
 	int c, option_index;
 	do {
 		c = getopt_long (argc, argv,
-				 "d:P:b:r:p:t:M:m:g:S:s:lv::h",
+				 "d:a:P:b:r:p:t:M:m:g:S:s:lv::h",
 		                 long_options, &option_index);
 		switch (c) {
 		    case 'd':
