@@ -24,7 +24,7 @@ AC_HEADER_STDBOOL
 # Checks for library functions.
 AC_FUNC_ALLOCA
 AC_FUNC_MKTIME
-AC_CHECK_FUNCS([gettimeofday memset pow])
+AC_CHECK_FUNCS([gettimeofday memset])
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [pow], [], [

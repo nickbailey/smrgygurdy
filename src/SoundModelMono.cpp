@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 
-#define RELEASE_INIT 40960
+#define RELEASE_INIT (1024*1600)
 #define DEFAULT_PEDAL_SPEED 1;
 
 SoundModelMono::SoundModelMono() {
@@ -61,7 +61,7 @@ void SoundModelMono::setNoteOn(int semitone) {
 			currentNote = semitone;
 
 		} catch (const char* e) {
-			std::cout << "Semitone " << semitone
+			std::cerr << "Semitone " << semitone
 			          << " out of range!" << std::endl;
 		}
 	}

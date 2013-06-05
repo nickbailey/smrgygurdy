@@ -28,7 +28,6 @@ void SoundModelPoly::setOutputGain(double output_gain) {
 
 	// tell all agregated SoundModelPoly's the gain's changed
 	// (SoundModelMonos should ingore this virtual method invocation)
-
 	for(std::vector<SoundModel*>::iterator sndModIterator =
 	        soundModelList.begin();
 	    sndModIterator != soundModelList.end();

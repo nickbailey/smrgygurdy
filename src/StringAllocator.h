@@ -1,4 +1,4 @@
-#include "artifastring/violin_instrument.h"
+#include "artifastring/artifastring_instrument.h"
 #ifndef STRING_ALLOCATOR_H
 #define STRING_ALLOCATOR_H
 
@@ -8,10 +8,10 @@
 class StringAllocator {
 
 	const double bowRatioFromBridge, bowForce;
-	const int vGString;
+	const int vCString;
 	double bowSpeed;
 	int stringSpace;
-	ViolinInstrument violin;
+	ArtifastringInstrument vc;
 	int stringNo;
 	
 

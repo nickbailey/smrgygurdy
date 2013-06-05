@@ -1,15 +1,15 @@
 #include <cmath>
 #include "StringAllocator.h"
-#include <artifastring/violin_instrument.h>
-#include <iostream>
+#include <artifastring/artifastring_instrument.h>
+//#include <iostream>
 
 StringAllocator::StringAllocator(): 
 
 	bowRatioFromBridge(0.07),
 	bowForce(2.0),
-	vGString(36), /* TODO: Get the real value for this - semitone value of lowest string on violin */
+	vCString(36), /* 'Cello C is MIDI note 36 */
 	stringSpace(7),
-	violin(5) { // 5 means 'cello (?!?)
+	vc(Cello) {
 
 	this->bowSpeed = 0;
 	this->stringNo = 0;
@@ -19,12 +19,12 @@ StringAllocator::StringAllocator():
 
 void StringAllocator::getSamples(short buffer[], int bufferSize) {
 
-	violin.wait_samples (buffer, bufferSize);
+	vc.wait_samples (buffer, bufferSize);
 }
 
 void StringAllocator::silence() {
 
-	violin.bow (stringNo, bowRatioFromBridge, 0, 0);
+	vc.bow (stringNo, bowRatioFromBridge, 0, 0);
 }
 
 void StringAllocator::setSemitone(int semitone) {
@@ -33,21 +33,20 @@ void StringAllocator::setSemitone(int semitone) {
 	double fingerPos;
 
 	/* Stop playing current string */
-	violin.reset();
+	vc.reset();
 
 	/* Currently cannot support semitones values lower than vGString */
-	if(semitone < vGString) {
+	if(semitone < vCString) {
 		throw "SemitoneOutOfRangeException";
 	}
 
-	stringNo = ( (semitone - vGString) / stringSpace );
+	stringNo = ( (semitone - vCString) / stringSpace );
 
-	if ( stringNo <= 3 )
-		stringDelta =  ( (semitone - vGString) % stringSpace );
-	
-	else { 
+	if ( stringNo <= 3 ) {
+		stringDelta =  ( (semitone - vCString) % stringSpace );
+	} else { 
 		stringNo = 3;
-		stringDelta = ( (semitone - ( vGString + stringSpace*3 )) );
+		stringDelta = ( (semitone - ( vCString + stringSpace*3 )) );
 	}
 
 	fingerPos = ( 1.0 - pow(2.0, -(double)stringDelta / 12.0) );	
@@ -55,8 +54,8 @@ void StringAllocator::setSemitone(int semitone) {
 	/* TODO: Find a way to enable/disable this */
 	//std::cout << "Playing semitone " << semitone << " on string " << stringNo << " with delta " << stringDelta << " at position " << fingerPos << std::endl;
 
-	violin.finger(stringNo, fingerPos);
-	violin.bow (stringNo, bowRatioFromBridge, bowForce, bowSpeed);
+	vc.finger(stringNo, fingerPos);
+	vc.bow (stringNo, bowRatioFromBridge, bowForce, bowSpeed);
 }
 
 
@@ -64,5 +63,5 @@ void StringAllocator::setPedalSpeed(double speed) {
 	
 	bowSpeed = speed;
 	//std:: cout << "StringAllocator: Changing pedal speed to " << speed << std::endl;
-	violin.bow (stringNo, bowRatioFromBridge, bowForce, bowSpeed);
+	vc.bow (stringNo, bowRatioFromBridge, bowForce, bowSpeed);
 }

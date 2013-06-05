@@ -180,16 +180,15 @@ int main(int argc, char ** argv) {
 	   which will then be used by threads */
 	int perThread = poly/noThreads;
 	int extra = poly % noThreads;
-	cout << "extra = " << extra << endl;
 
 	for(int i = 0; i < noThreads; i++) {
 		int models = perThread;
 		if(i < extra) models++;
 		cout << "Assigning " << models << " models to a thread" << endl;
-		subModels.push_back(new SoundModelPoly(models));
+		subModels.push_back(new SoundModelPoly(models, output_gain));
 	}
 
-	mainModel = new SoundModelPoly(subModels);
+	mainModel = new SoundModelPoly(subModels, output_gain);
 
 	// Create Playout Threads
 	for(int i = 0; i < noThreads; i++) {
