@@ -29,3 +29,10 @@ The following libraries need to be installed first:
 libhid is distributed in the tar file in the top level of this
 package, for convenience.
 
+You'll need a valid configuration file to run this program.
+An example is given in smrgygurdy.conf. You can copy this into /etc
+or to $HOME/.smrgygurdy as takes your fancy. smrgygurdy writes
+the current configuration to the latter on exiting via the
+q command.
+
+
