@@ -14,6 +14,7 @@
 #define VIOLIN_FINGERING_H
 
 #include <vector>
+#include <string>
 
 class ViolinFingering {
   public:
@@ -31,16 +32,19 @@ class ViolinFingering {
       const int a4;			///< Midi code which will correspond to A4
       const int divnper8ve;		///< Divisions per octave
       const std::vector<int> stgmidi;	///< Lookup table associating MIDI note with open strings
+      std::string longdesc;
     } TuningSet;
     
     ViolinFingering() { }
     
     /**
-     * Change the current temperament to a different MIDI key mapping
+     * Change the current temperament to a different MIDI key mapping.
+     * If the requested change is out-of-range, leave the current one unchanged.
      * 
      * @param t One of the supported temperaments.
+     * @return The temperament actually set
      */
-    static void setTemperament(Temperament t);
+    static Temperament setTemperament(Temperament t);
     
     /**
      * Get the current temperament by which fingerings are calculated

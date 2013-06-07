@@ -61,6 +61,7 @@ int main(int argc, char ** argv) {
 	int noThreads;      cfg.lookupValue("threads", noThreads);
 	int keyboard_id;    cfg.lookupValue("midi.controller_id", keyboard_id);
 	int keyboard_port;  cfg.lookupValue("midi.controller_port", keyboard_port);
+	int temperament;    cfg.lookupValue("midi.temperament", temperament);
 	double output_gain; cfg.lookupValue("model.output_gain", output_gain);
 	double autofade;    cfg.lookupValue("model.autofade_point", autofade);
 	double v_bow_max;   cfg.lookupValue("model.bow_speed_max", v_bow_max);
@@ -78,9 +79,10 @@ int main(int argc, char ** argv) {
 	  {"threads",      required_argument, 0, 't'},
 	  {"midi-id",      required_argument, 0, 'M'},
 	  {"midi-port",    required_argument, 0, 'm'},
+	  {"temperament",  required_argument, 0, 'T'},
 	  {"output-gain",  required_argument, 0, 'g'},
 	  {"bow-speed-max",required_argument, 0, 'S'},
-	  {"bow-speed-min",required_argument, 0, 'S'},
+	  {"bow-speed-min",required_argument, 0, 's'},
 	  {"list-midi",    no_argument,       0, 'l'},
 	  {"verbose",      optional_argument, 0, 'v'},
 	  {"help",         no_argument,       0, 'h'},
@@ -89,7 +91,7 @@ int main(int argc, char ** argv) {
 	int c, option_index;
 	do {
 		c = getopt_long (argc, argv,
-				 "d:a:P:b:r:p:t:M:m:g:S:s:lv::h",
+				 "d:a:P:b:r:p:t:M:m:T:g:S:s:lv::h",
 		                 long_options, &option_index);
 		switch (c) {
 		    case 'd':
@@ -137,6 +139,12 @@ int main(int argc, char ** argv) {
 			cfg.lookup("midi.controller_port") = keyboard_port;
 			cout << "Midi controller uses port " << keyboard_port << endl;
 			break;
+		    case 'T':
+			temperament = 
+			  ViolinFingering::setTemperament(ViolinFingering::Temperament(atoi(optarg)));
+			cfg.lookup("temperament") = temperament;
+			cout << "Temperament is " << ViolinFingering::tuningSets[temperament].longdesc;
+			break;
 		    case 'g':
 			output_gain = atof(optarg);
 			cfg.lookup("model.output_gain") = output_gain;
@@ -166,6 +174,9 @@ int main(int argc, char ** argv) {
 		}
 
 	} while (c != -1);
+	
+	// Assign Temperament
+	ViolinFingering::setTemperament(ViolinFingering::Temperament(temperament));
 
 	// Create Models
 	SoundModelPoly *mainModel;		/* SoundModel to be passed to controller */
@@ -183,7 +194,7 @@ int main(int argc, char ** argv) {
 	for(int i = 0; i < noThreads; i++) {
 		int models = perThread;
 		if(i < extra) models++;
-		cout << "Assigning " << models << " models to a thread" << endl;
+		//cout << "Assigning " << models << " models to a thread" << endl;
 		subModels.push_back(new SoundModelPoly(models, output_gain));
 	}
 
@@ -231,8 +242,13 @@ int main(int argc, char ** argv) {
 	cout << "      C to report stats" << endl;
 	cout << "      G to set output gain" << endl;
 	cout << "      S/Shift-S to set bow speed (no/full pedal)" << endl;
+	cout << "      T to change temperament" << endl;
 
-	while( (c = getchar()) != 'q') {
+	// Work with the current tuning set
+	const ViolinFingering::TuningSet &t =
+	  ViolinFingering::tuningSets[ViolinFingering::getTemperament()];
+
+	  while( (c = getchar()) != 'q') {
 	    switch (c) {
 	      case 'c':
 	        cout << "Bowing at " << controller.get_bow_speed()
@@ -241,6 +257,9 @@ int main(int argc, char ** argv) {
 		cout << "Bow speed limits: " << controller.min_speed
 		     << "..." << controller.max_speed << endl;
 		cout << "Output gain: " << output_gain << endl;
+		cout << "Temperament: "
+		     << ViolinFingering::tuningSets[ViolinFingering::getTemperament()].longdesc
+		     << endl;
 	        break;
 
 	      case 'g':
@@ -268,6 +287,23 @@ int main(int argc, char ** argv) {
 		controller.speedChange(pedal->get_value());
 		cfg.lookup("model.bow_speed_min") = v_bow_min;
 		break;
+		
+	      case 't':
+		cout << "Current temperament = " << t.longdesc << endl
+		     << "Select from the following:" << endl;
+		for (ViolinFingering::Temperament i = ViolinFingering::Temperament(0);
+		     i < ViolinFingering::END;
+		     i = ViolinFingering::Temperament(i+1) ) {
+			cout << '\t' << i << ": "
+			     << ViolinFingering::tuningSets[i].longdesc
+			     << endl;
+		}
+		cin >> temperament;
+		temperament = 
+		  ViolinFingering::setTemperament(ViolinFingering::Temperament(temperament));
+		cfg.lookup("midi.temperament") = temperament;
+		break;
+		     
 
 	      case EOF:      break;
 	      case '\n':     break;

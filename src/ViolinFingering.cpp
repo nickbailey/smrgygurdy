@@ -4,27 +4,31 @@
 const ViolinFingering::TuningSet ViolinFingering::tuningSets[] = {
   // For each tuning, supply MIDI number associated with A440,
   //    divisions of the octave, and MIDI numbers for each string here.
-  { 69, 12, {36, 43, 50, 57} },		// 12ET
-  { 69, 19, {17, 28, 39, 50} },		// 19ET, A4 sounds A4
-  { 88, 19, {36, 47, 58, 69} }		// 19ET, A4 sounds A3
+  { 69, 12, {36, 43, 50, 57}, "12ET" },				// 12ET
+  { 69, 19, {17, 28, 39, 50}, "19ET, A4 sounds at pitch" },	// 19ET, A4 sounds A4
+  { 88, 19, {36, 47, 58, 69}, "19ET, A4 sounds A3" }		// 19ET, A4 sounds A3
 };
 
 // Unless told otherwise, use standard temperament.
 ViolinFingering::Temperament ViolinFingering::theTemperament(et12);
 
-void ViolinFingering::setTemperament(ViolinFingering::Temperament t) {
+ViolinFingering::Temperament ViolinFingering::setTemperament(Temperament t) {
   if (t >= 0 && t < END) theTemperament = t;
+  return getTemperament();
 }
 
 int ViolinFingering::getStringHint(int midi) const throw (const char *) {
   
+  // Using the current temperament...
+  const TuningSet &t = tuningSets[theTemperament];
+  
   // Below instrument's range?
-  if (midi < tuningSets[theTemperament].stgmidi[0])
+  if (midi < t.stgmidi[0])
     throw "MIDI note below instrument's range";
   
-  int i = END;
+  int i = t.stgmidi.size();
   while (--i)
-    if (midi > tuningSets[theTemperament].stgmidi[i])
+    if (midi > t.stgmidi[i])
       break;
   
   return i;
