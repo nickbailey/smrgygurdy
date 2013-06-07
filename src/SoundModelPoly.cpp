@@ -36,11 +36,11 @@ void SoundModelPoly::setOutputGain(double output_gain) {
 	}
 }
 
-void SoundModelPoly::setNoteOn(int semitone) {
+void SoundModelPoly::setNoteOn(int midinote) {
 
 	for(unsigned int i = 0; i < soundModelList.size(); i++)
 		if(!(soundModelList[i]->isPlaying())) {
-			soundModelList[i]->setNoteOn(semitone);
+			soundModelList[i]->setNoteOn(midinote);
 			lastSoundModel = i;
 			return;
 		}
@@ -48,16 +48,16 @@ void SoundModelPoly::setNoteOn(int semitone) {
 	/* Remember the last sound model to better distribute the keypresses */
 	/* Only gets invoked if all contained models are playing */
 	(++lastSoundModel) %= soundModelList.size();
-	soundModelList[lastSoundModel]->setNoteOn(semitone);
+	soundModelList[lastSoundModel]->setNoteOn(midinote);
 }
 
-void SoundModelPoly::setNoteOff(int semitone) {
+void SoundModelPoly::setNoteOff(int midinote) {
 
 	for(std::vector<SoundModel*>::iterator sndModIterator =
 	        soundModelList.begin();
 	    sndModIterator != soundModelList.end();
 	    sndModIterator++) {
-		(*sndModIterator)->setNoteOff(semitone);
+		(*sndModIterator)->setNoteOff(midinote);
 	}
 }
 

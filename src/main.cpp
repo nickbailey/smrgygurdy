@@ -100,8 +100,7 @@ int main(int argc, char ** argv) {
 		    case 'a':
 			autofade = atof(optarg);
 			cfg.lookup("model.autofade") = autofade;
-			cout << "Fade out below pedal = " << autofade
-			     << "\"" << endl;
+			cout << "Fade out below pedal = " << autofade << endl;
 			break;
 		    case 'P':
 			pedal_dev = optarg;
@@ -176,8 +175,8 @@ int main(int argc, char ** argv) {
 
 	sink = new OutputMixer(noThreads, pcm, bsize, rate);
 
-	/* This will assign SoundModelMono instances as equally as possible to SoundModelPoly's
-	   which will then be used by threads */
+	/* This will assign SoundModelMono instances as equally as possible to each SoundModelPoly,
+	   one of which will be given to each thread */
 	int perThread = poly/noThreads;
 	int extra = poly % noThreads;
 

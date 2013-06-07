@@ -2,6 +2,7 @@
 #include "SoundModelMono.h"
 #include "OutputSink.h"
 #include "Lock.h"
+#include "ViolinFingering.h"
 #include <string>
 #include <iostream>
 
@@ -13,12 +14,14 @@ SoundModelMono::SoundModelMono() {
 	this->noteOn = false;
 	this->currentNote = -1;
 	this->release = 0;
-	this->pedalSpeed = DEFAULT_PEDAL_SPEED; 
+	this->pedalSpeed = DEFAULT_PEDAL_SPEED;
 
 }
 
 void SoundModelMono::getSamples(short samples[], int bufferSize) {
 
+	ViolinFingering vf;
+	
 	lock.acquire();
 
 	/* Allows us to render sound when in release or on state */
@@ -49,20 +52,20 @@ bool SoundModelMono::isPlaying() {
 
 }
 
-void SoundModelMono::setNoteOn(int semitone) {
+void SoundModelMono::setNoteOn(int midinote) {
 	lock.acquire();
 
-	if(noteOn == false || currentNote != semitone) {
+	if(noteOn == false || currentNote != midinote) {
 
 		try{
-			violin.setSemitone(semitone);
+			violin.setSemitone(midinote);
 			violin.setPedalSpeed(pedalSpeed);
 			noteOn = true;
-			currentNote = semitone;
+			currentNote = midinote;
 
 		} catch (const char* e) {
-			std::cerr << "Semitone " << semitone
-			          << " out of range!" << std::endl;
+			std::cerr << "Midi note on (note " << midinote
+			          << ") out of range!" << std::endl;
 		}
 	}
 
@@ -70,12 +73,12 @@ void SoundModelMono::setNoteOn(int semitone) {
 
 }
 
-void SoundModelMono::setNoteOff(int semitone) { 
+void SoundModelMono::setNoteOff(int midinote) { 
 
 	lock.acquire();
 
 	/* Only turn of if we're actually playing that note */
-	if(currentNote == semitone) { 
+	if(currentNote == midinote) { 
 		noteOn = false;
 		release = RELEASE_INIT;
 		violin.silence();

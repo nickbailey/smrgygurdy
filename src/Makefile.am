@@ -9,7 +9,7 @@ smrgygurdy_SOURCES = \
         Keyboard.cpp \
         Lock.cpp Thread.cpp \
         main.cpp Controller.cpp \
-	DummyPedal.cpp
+	DummyPedal.cpp ViolinFingering.cpp
 
 EXTRA_smrgygurdy_SOURCES = MiniLAB1080.cpp Comedi.cpp
 

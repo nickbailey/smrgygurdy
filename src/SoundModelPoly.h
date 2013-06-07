@@ -75,9 +75,9 @@ class SoundModelPoly : public SoundModel {
 		 * playing over ones which are, to ensure that maximum
 		 * polyphony is achieved.
 		 *
-		 * @param semitone Semitone value of note to turn on
+		 * @param midinote Midi note number of note to turn on
 		 */
-		virtual void setNoteOn(int semitone);
+		virtual void setNoteOn(int midinote);
 
 		/**
 		 * Stop a note playing
@@ -86,9 +86,9 @@ class SoundModelPoly : public SoundModel {
 		 * SoundModels. Hence multiple contained models are playing
 		 * the same note, the note will be disabled on all models.
 		 *
-		 * @param semitone Semitone alue of note to turn off
+		 * @param midinote Midi note number of note to turn off
 		 */
-		virtual void setNoteOff(int semitone);
+		virtual void setNoteOff(int midinote);
 
 		/**
 		 * Set the pedal speed of all contained sound models

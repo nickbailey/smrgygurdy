@@ -1,4 +1,3 @@
-#include <cmath>
 #include "StringAllocator.h"
 #include <artifastring/artifastring_instrument.h>
 //#include <iostream>
@@ -27,32 +26,30 @@ void StringAllocator::silence() {
 	vc.bow (stringNo, bowRatioFromBridge, 0, 0);
 }
 
-void StringAllocator::setSemitone(int semitone) {
+void StringAllocator::setSemitone(int midinote) {
 	
-	int stringDelta;
 	double fingerPos;
 
 	/* Stop playing current string */
 	vc.reset();
 
-	/* Currently cannot support semitones values lower than vGString */
-	if(semitone < vCString) {
-		throw "SemitoneOutOfRangeException";
-	}
+	//stringNo = ( (midinote - vCString) / stringSpace );
+	stringNo = fingering.getStringHint(midinote);
 
-	stringNo = ( (semitone - vCString) / stringSpace );
-
+	/*
 	if ( stringNo <= 3 ) {
-		stringDelta =  ( (semitone - vCString) % stringSpace );
+		stringDelta =  ( (midinote - vCString) % stringSpace );
 	} else { 
 		stringNo = 3;
-		stringDelta = ( (semitone - ( vCString + stringSpace*3 )) );
+		stringDelta = ( (midinote - ( vCString + stringSpace*3 )) );
 	}
-
-	fingerPos = ( 1.0 - pow(2.0, -(double)stringDelta / 12.0) );	
-
+	*/
+	
+	//fingerPos = ( 1.0 - pow(2.0, -(double)stringDelta / 12.0) );	
+	fingerPos = fingering.getStopPosn(midinote, stringNo);
+	
 	/* TODO: Find a way to enable/disable this */
-	//std::cout << "Playing semitone " << semitone << " on string " << stringNo << " with delta " << stringDelta << " at position " << fingerPos << std::endl;
+	//std::cout << "Playing midinote " << midinote << " on string " << stringNo << " at position " << fingerPos << std::endl;
 
 	vc.finger(stringNo, fingerPos);
 	vc.bow (stringNo, bowRatioFromBridge, bowForce, bowSpeed);

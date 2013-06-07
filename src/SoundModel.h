@@ -58,12 +58,12 @@ class SoundModel {
 		virtual bool isPlaying() = 0;
 
 		/**
-         * Render a period of sound data and store in samples. 
-         *
-         * @param samples Array to which samples should be written
-         * @param bufferSize length of array
-         */
-         virtual void getSamples(short samples[], int bufferSize) = 0;
+		 * Render a period of sound data and store in samples. 
+		 *
+		 * @param samples Array to which samples should be written
+		 * @param bufferSize length of array
+		 */
+		virtual void getSamples(short samples[], int bufferSize) = 0;
 
 
 };
