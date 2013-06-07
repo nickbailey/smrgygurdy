@@ -10,12 +10,10 @@ class StringAllocator {
 
 	ViolinFingering fingering;
 	const double bowRatioFromBridge, bowForce;
-	const int vCString;
 	double bowSpeed;
 	int stringSpace;
 	ArtifastringInstrument vc;
 	int stringNo;
-	
 
 	public:
 		/**
