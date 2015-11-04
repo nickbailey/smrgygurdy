@@ -110,8 +110,7 @@ void Keyboard::midiAction() {
 				fprintf(stderr, "Note Off %d \n",note);
 			}
 		}
-      
-      break; 
+	break; 
        
     case SND_SEQ_EVENT_NOTEOFF:
 		note =  event->data.note.note;
@@ -122,8 +121,21 @@ void Keyboard::midiAction() {
 		if (announce && note != 0) {
 			fprintf(stderr, "Note Off %d \n",note); 
         	}
-      break;        
-    }
+	break;
+
+    case SND_SEQ_EVENT_CONTROLLER:
+		// Forward modulation events to the controller,
+		// just in case anybody is interested.
+		if (event->data.control.param == 1) {
+			const int p = event->data.control.value;
+			controller->modulationEvent(p);
+			if (announce) {
+				fprintf(stderr, "Modulation %d\n", p);
+			}
+		} 
+        break;
+
+	}
     snd_seq_free_event(event);
   } while (snd_seq_event_input_pending(sequencer, 0) > 0);
 

@@ -7,7 +7,10 @@
 #include <alsa/asoundlib.h>
 
 /**
- * Provides interface for the ALSA Sequencer API. The sequencer client subscribes to a USB keyboard client with a specified id and polls it for incoming MIDI events. It passes the appropriate commands to an instance of Controller based on what it receives.
+ * Provides interface for the ALSA Sequencer API.
+ * The sequencer client subscribes to a USB keyboard client with a specified id
+ * and polls it for incoming MIDI events. It passes the appropriate commands
+ * to an instance of Controller based on what it receives.
  */
 
 class Keyboard : public Thread {
