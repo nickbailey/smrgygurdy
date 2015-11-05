@@ -2,3 +2,14 @@ v1.0.	8th December 2011
 
 First version with autoconf/automake build system
 
+v1.1.	Quite a while after that.
+
+Support for the newer API from artifastring and more
+command line options.
+
+v1.2.	5th Nov 2015
+
+MIDI modulation wheel can now set replace the pedal
+in an emergency (--pedal=modwheel); New ModulationEventListener
+class permits Pedals to be informed of MIDI CC1 events;
+various up-tidying. NJB/.
