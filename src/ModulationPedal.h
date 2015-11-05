@@ -36,4 +36,4 @@ class ModulationPedal : public Pedal, ModulationEventListener {
  protected:
 	double last_value;
 };
-#endif /*DUMMYPEDAL_H*/
+#endif /*MODULATIONPEDAL_H*/

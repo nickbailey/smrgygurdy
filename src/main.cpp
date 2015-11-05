@@ -162,7 +162,7 @@ int main(int argc, char ** argv) {
 			cout << "Bow speed (no pedal) set to " << v_bow_min << endl;
 			break;
 		    case 'l':
-			exit (system("aconnect -lo"));
+			exit (system("aconnect -li"));
 		    case 'h':
 			exit (usage());
 		    case 'v':
