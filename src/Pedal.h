@@ -33,5 +33,6 @@ class Pedal : public Thread {
     Controller *controller;
     double value;	///< Current normalised pedal value
     double epsilon;	///< Minimum change in value which triggers an event
+    bool announce;      ///< Whether or not to display debug info
 };
 #endif /*PEDAL_H*/

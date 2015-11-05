@@ -4,6 +4,7 @@
 #include "Thread.h"
 #include "Lock.h"
 #include "SoundModel.h"
+#include "ModulationEventListener.h"
 #include <queue>
 #include <string>
 
@@ -14,6 +15,7 @@
 
 class Controller: public Thread{
 
+ protected:
 	/**
 	 *An item on the noteQueue.
 	 */
@@ -66,7 +68,6 @@ class Controller: public Thread{
 
   //Default gain of the SoundModel (adjusted by autofading)
   double default_output_gain;
-  
   
  public:
 
@@ -145,9 +146,27 @@ class Controller: public Thread{
    * @return Modulation setting in the range 0.0 - 1.0.
    */
   double get_modulation() const { return modulation; }
+  
+  /**
+   * Register a new modulation event listener overriding the current one.
+   * 
+   * The new event listner must deregister itself on destruction.
+   * Registering NULL as the listener suppresses any handling of
+   * MIDI CC1 (Modulation Wheel) events.
+   * 
+   * @param listener The new listener
+   * @return the previous listner which the new one replaces.
+   */
+  ModulationEventListener *registerEventListener(ModulationEventListener *listener);
 
   double max_speed; ///< maximum bow speed (pedal = 1.0)
   double min_speed; ///< minumum bow speed (pedal = 0.0)
+  
+protected:
+  // The Modulation Event Wheel listener to call (if any)
+  ModulationEventListener *modulationEventListener;
+  
+
 };
 
 #endif /* CONTROLLER_H */

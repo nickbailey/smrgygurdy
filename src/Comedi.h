@@ -40,9 +40,5 @@ class Comedi : public Pedal {
          */
 	bogio_buf *m_buf;
 
-	/**
-	 * Whether to announce pedal value changes
-	 */
-	bool announce;
 };
 #endif /*COMEDI_H*/

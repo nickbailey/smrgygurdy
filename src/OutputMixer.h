@@ -45,7 +45,7 @@ class OutputMixer : public OutputSink {
 		/**
 		 * Destructor
 		 */
-		~OutputMixer();
+		virtual ~OutputMixer();
 
 		/**
 		 * Write some samples to the mixer. Will be output mixed with other sources.

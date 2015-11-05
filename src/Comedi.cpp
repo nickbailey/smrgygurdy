@@ -7,8 +7,9 @@
 #include <bogio.h>
 
 Comedi::Comedi(Controller *c, double eps, int verbosity) :
-    Pedal(c, eps), announce(verbosity > 1)
+    Pedal(c, eps)
 {
+    announce = (verbosity > 1);
     m_spec = { NULL,		// Comedi device name
                1,		// Number of channels
                100,		// Samples per second

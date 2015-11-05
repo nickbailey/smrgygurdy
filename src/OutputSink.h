@@ -29,6 +29,8 @@ class OutputSink {
 	 * Close the audio system, will wait for sound to finish.
  	 */
 	virtual void close() = 0;
+	
+	virtual ~OutputSink() { }
 
 	/* Exception List */
 

@@ -3,9 +3,9 @@
 
 
 AC_PREREQ([2.68])
-AC_INIT([smrgygurdy], [1.1], [nick@n-ism.org])
-AM_INIT_AUTOMAKE(smrgygurdy, 1.1)
-AC_CONFIG_SRCDIR([config.h.in])
+AC_INIT([smrgygurdy], [1.2], [nick@n-ism.org])
+AC_CONFIG_SRCDIR([src/main.cpp])
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([config.h])
 
 # Checks for programs.

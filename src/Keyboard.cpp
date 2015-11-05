@@ -129,9 +129,6 @@ void Keyboard::midiAction() {
 		if (event->data.control.param == 1) {
 			const int p = event->data.control.value;
 			controller->modulationEvent(p);
-			if (announce) {
-				fprintf(stderr, "Modulation %d\n", p);
-			}
 		} 
         break;
 

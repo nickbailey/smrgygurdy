@@ -18,6 +18,7 @@
 #ifdef SUPPORT_COMEDI
 #include "Comedi.h"
 #endif
+#include "ModulationPedal.h"
 #include "DummyPedal.h"
 #include "Controller.h"
 #include "Keyboard.h"
@@ -224,6 +225,9 @@ int main(int argc, char ** argv) {
 	if (!pedal_dev.compare("comedi"))
 		pedal = new Comedi(&controller, 0.01, verbosity);
 #endif
+	if (!pedal_dev.compare("modwheel"))
+		pedal = new ModulationPedal(&controller, 0.01, verbosity);
+
 	if (!pedal_dev.compare("dummy"))
 		pedal = new DummyPedal(&controller);
 
@@ -323,7 +327,8 @@ int usage(void)
         cout << "\t--alsa-device=dev | -ddev:      Set audio output stream" << endl;
         cout << "\t--pedal-device=class | -Pclass: Set pedal device class" << endl;
         cout << "\t        Supported classes: comedi; minilab1080" << endl;
-	cout << "\t                           dummy (fixed value 0.75)" << endl;
+        cout << "\t                           modwheel (wheel on MIDI controller)" << endl;
+        cout << "\t                           dummy (fixed value 0.75)" << endl;
         cout << "\t--buffer-size=size | -bsize:    Set audio buffer length to size" << endl;
         cout << "\t--sample-rate=rate | -rrate:    Set audio sample rate in Hz" << endl;
         cout << "\t--polyphony=voices | -pvoices:  Set max number of sounding voices" << endl;

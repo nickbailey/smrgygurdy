@@ -6,7 +6,7 @@
 DummyPedal::DummyPedal(Controller *c) :
     Pedal(c)
 {
-    value = 1;
+    value = 0.75;
 }
 
 void DummyPedal::run() {
