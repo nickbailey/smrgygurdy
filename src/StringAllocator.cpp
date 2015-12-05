@@ -3,7 +3,7 @@
 //#include <iostream>
 
 StringAllocator::StringAllocator() : bowRatioFromBridge(0.07),
-                                     bowForce(2.0),
+                                     bowForce(2.5),
                                      vc(Cello) {
 	this->bowSpeed = 0;
 	this->stringNo = 0;

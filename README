@@ -25,6 +25,8 @@ The following libraries need to be installed first:
 	libusb (if configured to use the MiniLAB HID)
 	libhid (if configured to use the MiniLAB HID)
         comedilib (if configured to use comedi devices - default)
+        bogiolib (https://github.com/nickbailey/bogiolib -
+                  a wrapper to simplify access to comedilib)
 
 libhid is distributed in the tar file in the top level of this
 package, for convenience.

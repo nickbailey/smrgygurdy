@@ -2,9 +2,9 @@
 @mainpage SMRGyGurdy
 
 SMRGyGurdy is a music synthesiser that tries to emulate a medieval
-folk instrument called hurdy gurdy. It uses a MIDI keyboard and a foot
+folk instrument called a hurdy-gurdy. It uses a MIDI keyboard and a foot
 pedal for input and generates sound output using the Artifastring
-synthesis library.
+synthesis library. It can be downloaded from https://github.com/nickbailey/smrgygurdy
 
 
 @section install 1. Installation
