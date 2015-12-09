@@ -67,7 +67,7 @@ class OutputMixer : public OutputSink {
 
 	private:
 		/**
-		 * Do the construtors' work
+		 * Do the constructors' work
 		 */
 		void init(int sources, OutputSink *outputHandle, int bufferSize);
 		/**
