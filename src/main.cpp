@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <limits>
 #include <libconfig.h++>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -241,16 +242,11 @@ int main(int argc, char ** argv) {
 
 
 	// Console interaction
-
 	cout << "Enter Q to quit" << endl;
 	cout << "      C to report stats" << endl;
 	cout << "      G to set output gain" << endl;
 	cout << "      S/Shift-S to set bow speed (no/full pedal)" << endl;
 	cout << "      T to change temperament" << endl;
-
-	// Work with the current tuning set
-	const ViolinFingering::TuningSet &t =
-	  ViolinFingering::tuningSets[ViolinFingering::getTemperament()];
 
 	  while( (c = getchar()) != 'q') {
 	    switch (c) {
@@ -269,7 +265,11 @@ int main(int argc, char ** argv) {
 	      case 'g':
 		cout << "Current output gain = " << output_gain << endl
 		     << "New value? ";
-		cin >> output_gain;
+                while(!(cin >> output_gain)){
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid.  Enter floating-point output gain (e.g. 1.5): ";
+                }
 		mainModel->setOutputGain(output_gain);
 		cfg.lookup("model.output_gain") = output_gain;
 		break;
@@ -277,7 +277,11 @@ int main(int argc, char ** argv) {
 	      case 'S':
 		cout << "Current bow speed (full pedal) = " << v_bow_max << endl
 		     << "New value? ";
-		cin >> v_bow_max;
+                while(!(cin >> v_bow_max)){
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid.  Enter max bow speed in m/s: ";
+                }
 		controller.max_speed = v_bow_max;
 		controller.speedChange(pedal->get_value());
 		cfg.lookup("model.bow_speed_max") = v_bow_max;
@@ -286,14 +290,20 @@ int main(int argc, char ** argv) {
 	      case 's':
 		cout << "Current bow speed (nol pedal) = " << v_bow_min << endl
 		     << "New value? ";
-		cin >> v_bow_min;
+                while(!(cin >> v_bow_min)){
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid.  Enter minimum bow speed in m/s: ";
+                }
 		controller.min_speed = v_bow_min;
 		controller.speedChange(pedal->get_value());
 		cfg.lookup("model.bow_speed_min") = v_bow_min;
 		break;
 		
 	      case 't':
-		cout << "Current temperament = " << t.longdesc << endl
+		cout << "Current temperament = "
+                     << ViolinFingering::tuningSets[ViolinFingering::getTemperament()].longdesc
+                     << endl
 		     << "Select from the following:" << endl;
 		for (ViolinFingering::Temperament i = ViolinFingering::Temperament(0);
 		     i < ViolinFingering::END;
@@ -302,7 +312,11 @@ int main(int argc, char ** argv) {
 			     << ViolinFingering::tuningSets[i].longdesc
 			     << endl;
 		}
-		cin >> temperament;
+                while(!(cin >> temperament)){
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid.  Enter a temperament number from the list: ";
+                }
 		temperament = 
 		  ViolinFingering::setTemperament(ViolinFingering::Temperament(temperament));
 		cfg.lookup("midi.temperament") = temperament;
