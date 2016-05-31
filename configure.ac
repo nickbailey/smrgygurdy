@@ -96,10 +96,12 @@ AS_IF([test "x$with_serialpedal" "!=" "xno"], [
 dnl Advise user if no pedal hardware is supported
 
 if test "x$with_comedi" = xno &&
+   test "x$with_serialpedal" = xno &&
    test "x$with_MiniLAB1008" "!=" xyes ; then
     AC_MSG_WARN([no pedal hardware interfaces configured!])
 fi
 
+dnl Let the application know which pedal classes are supported
 AC_SUBST([PEDAL_CLASSES])
 
 AC_CONFIG_FILES([Makefile src/Makefile])

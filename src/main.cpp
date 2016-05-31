@@ -36,7 +36,6 @@ using namespace libconfig;
 int usage(void);
 
 int main(int argc, char ** argv) {
-
 	// Check to see whether configuration file exists
 	string cfg_path(getenv("HOME"));
         cfg_path += "/.smrgygurdy";
@@ -44,8 +43,8 @@ int main(int argc, char ** argv) {
 	struct stat cfg_stat;
 	if (stat(cfg_path.c_str(), &cfg_stat) == -1) {
 		cerr << "Couldn't stat " << cfg_path <<
-		        " - looking in /etc" << endl;
-		cfg_path = "/etc/smrgygurdy.conf";
+		        " - looking in /usr/local/etc" << endl;
+		cfg_path = "/usr/local/etc/smrgygurdy.conf";
 	}
 	if (stat(cfg_path.c_str(), &cfg_stat) == -1) {
 		cerr << "Couldn't stat config file" << endl;
