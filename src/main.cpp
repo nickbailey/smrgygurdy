@@ -43,8 +43,13 @@ int main(int argc, char ** argv) {
 	struct stat cfg_stat;
 	if (stat(cfg_path.c_str(), &cfg_stat) == -1) {
 		cerr << "Couldn't stat " << cfg_path <<
-		        " - looking in /usr/local/etc" << endl;
+		" - looking in /usr/local/etc" << endl;
 		cfg_path = "/usr/local/etc/smrgygurdy.conf";
+	}
+	if (stat(cfg_path.c_str(), &cfg_stat) == -1) {
+		cerr << "Couldn't stat " << cfg_path <<
+		" either - looking in /etc" << endl;
+		cfg_path = "/etc/smrgygurdy.conf";
 	}
 	if (stat(cfg_path.c_str(), &cfg_stat) == -1) {
 		cerr << "Couldn't stat config file" << endl;
