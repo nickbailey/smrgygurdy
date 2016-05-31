@@ -13,7 +13,7 @@ smrgygurdy_SOURCES = \
         DummyPedal.cpp ModulationPedal.cpp \
         ViolinFingering.cpp
 
-EXTRA_smrgygurdy_SOURCES = MiniLAB1080.cpp Comedi.cpp
+EXTRA_smrgygurdy_SOURCES = MiniLAB1080.cpp Comedi.cpp SerialPedal.cpp
 
 smrgygurdy_LDADD = $(PEDAL_CLASSES) \
                    $(ARTIFASTRING_LIBS) $(LIBCONFIGXX_LIBS) \

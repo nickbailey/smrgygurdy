@@ -8,7 +8,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <getopt.h>
+
 #include <config.h>
+
 #include "SoundModelPoly.h"
 #include "PlayoutThread.h"
 #include "Pedal.h"
@@ -18,6 +20,9 @@
 #endif
 #ifdef SUPPORT_COMEDI
 #include "Comedi.h"
+#endif
+#ifdef SUPPORT_SERIALPEDAL
+#include "SerialPedal.h"
 #endif
 #include "ModulationPedal.h"
 #include "DummyPedal.h"
@@ -58,7 +63,8 @@ int main(int argc, char ** argv) {
 	string pcm;         cfg.lookupValue("pcm", pcm);
 	int bsize;          cfg.lookupValue("buffer_size", bsize);
 	int rate;           cfg.lookupValue("sample_rate", rate);
-	string pedal_dev;   cfg.lookupValue("pedal", pedal_dev);
+	string pedal_dev;   cfg.lookupValue("pedal.kind", pedal_dev);
+	string serial_dev;  cfg.lookupValue("pedal.serial_dev", serial_dev);
 	int poly;           cfg.lookupValue("polyphony", poly);
 	int noThreads;      cfg.lookupValue("threads", noThreads);
 	int keyboard_id;    cfg.lookupValue("midi.controller_id", keyboard_id);
@@ -87,13 +93,14 @@ int main(int argc, char ** argv) {
 	  {"bow-speed-min",required_argument, 0, 's'},
 	  {"list-midi",    no_argument,       0, 'l'},
 	  {"verbose",      optional_argument, 0, 'v'},
+	  {"serial-device",required_argument, 0, 'C'},
 	  {"help",         no_argument,       0, 'h'},
 	  {0, 0, 0, 0}
 	};
 	int c, option_index;
 	do {
 		c = getopt_long (argc, argv,
-				 "d:a:P:b:r:p:t:M:m:T:g:S:s:lv::h",
+				 "d:a:P:b:r:p:t:M:m:T:g:S:s:lv::C:h",
 		                 long_options, &option_index);
 		switch (c) {
 		    case 'd':
@@ -108,7 +115,7 @@ int main(int argc, char ** argv) {
 			break;
 		    case 'P':
 			pedal_dev = optarg;
-			cfg.lookup("pedal") = pedal_dev;
+			cfg.lookup("pedal.kind") = pedal_dev;
 			cout << "Using pedal device \"" << pedal_dev << "\"" << endl;
 			break;
 		    case 'b':
@@ -164,6 +171,11 @@ int main(int argc, char ** argv) {
 			break;
 		    case 'l':
 			exit (system("aconnect -li"));
+		    case 'C':
+			serial_dev = optarg;
+			cfg.lookup("pedal.serial_dev") = serial_dev;
+			cout << "Pedal connected to " << serial_dev << endl;
+			break;
 		    case 'h':
 			exit (usage());
 		    case 'v':
@@ -225,6 +237,16 @@ int main(int argc, char ** argv) {
 #ifdef SUPPORT_COMEDI
 	if (!pedal_dev.compare("comedi"))
 		pedal = new Comedi(&controller, 0.01, verbosity);
+#endif
+#ifdef SUPPORT_SERIALPEDAL
+	try {
+		if (!pedal_dev.compare("serialpedal"))
+			pedal = new SerialPedal(&controller, serial_dev, 0.01, verbosity);
+	} catch (const char *e) {
+		cout << "Caught exception creating Serial Pedal object:\n"
+		     << e << endl;
+		exit(-1);
+	}
 #endif
 	if (!pedal_dev.compare("modwheel"))
 		pedal = new ModulationPedal(&controller, 0.01, verbosity);
@@ -356,6 +378,9 @@ int usage(void)
         cout << "\t        1 = report midi note on/off;" << endl;
         cout << "\t        2 = also report changes of pedal value" << endl;
         cout << "\t--list-midi | -l:               List midi input devices and exit" << endl;
+#ifdef SUPPORT_SERIALPEDAL
+	cout << "\t--serial-dev=dev | -Cdev:       Read serial pedal data from dev" << endl;
+#endif
         cout << "\t--help | -h:                    Print usage and exit" << endl;
 
 	return 0;

@@ -84,6 +84,15 @@ AS_IF([test "x$with_comedi" "!=" "xno"], [
     PEDAL_CLASSES="$PEDAL_CLASSES Comedi.\$(OBJEXT)"
 ])
 
+AC_ARG_WITH([serialpedal],
+            AS_HELP_STRING([--without-serialpedal],
+                           [Do not support devices connected to serial/USB serial ports]))
+AS_IF([test "x$with_serialpedal" "!=" "xno"], [
+    AC_DEFINE([SUPPORT_SERIALPEDAL], [],
+              [Build support for comedi interfaces])
+    PEDAL_CLASSES="$PEDAL_CLASSES SerialPedal.\$(OBJEXT)"
+])
+
 dnl Advise user if no pedal hardware is supported
 
 if test "x$with_comedi" = xno &&
