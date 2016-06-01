@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <array>
 #include <vector>
 #include <limits>
 #include <libconfig.h++>
@@ -37,32 +38,36 @@ int usage(void);
 
 int main(int argc, char ** argv) {
 	// Check to see whether configuration file exists
-	string cfg_path(getenv("HOME"));
-        cfg_path += "/.smrgygurdy";
-	string user_cfg_path(cfg_path); // always write changes here.
+	// Places to look for the config file.
+	// Changes get written to the user config file;
+	// this *must* be the first one.
+	array<string, 3> sys_cfg_fqn = {
+		string(getenv("HOME")) + "/.smrgygurdy",
+		"/usr/local/etc/smrgygurdy.conf",
+		"/etc/smrgygurdy.conf"
+	};
+	const string* user_cfg_fqn { &sys_cfg_fqn[0] }; // always write changes here.
+	const char* cfg_fqn { nullptr };
+	
 	struct stat cfg_stat;
-	if (stat(cfg_path.c_str(), &cfg_stat) == -1) {
-		cerr << "Couldn't stat " << cfg_path <<
-		" - looking in /usr/local/etc" << endl;
-		cfg_path = "/usr/local/etc/smrgygurdy.conf";
+	for (const string& fqn : sys_cfg_fqn) {
+		if (stat(fqn.c_str(), &cfg_stat) == -1) {
+			cerr << "Couldn't stat " << fqn << endl;
+		} else {
+			cfg_fqn = fqn.c_str();
+			break;
+		}
 	}
-	if (stat(cfg_path.c_str(), &cfg_stat) == -1) {
-		cerr << "Couldn't stat " << cfg_path <<
-		" either - looking in /etc" << endl;
-		cfg_path = "/etc/smrgygurdy.conf";
-	}
-	if (stat(cfg_path.c_str(), &cfg_stat) == -1) {
-		cerr << "Couldn't stat config file" << endl;
-		exit(-1);
-	}
+	cerr << "Reading configuration from " << cfg_fqn << endl;
+
 	if (!(cfg_stat.st_mode & S_IRUSR)) {
-		cerr << "Cannot read from " << cfg_path <<
+		cerr << "Cannot read from " << cfg_fqn <<
 		        ": insufficient permission" << endl;
 		exit(-1);
 	}
 
 	Config cfg;
-	cfg.readFile(cfg_path.c_str());
+	cfg.readFile(cfg_fqn);
 
 	string pcm;         cfg.lookupValue("pcm", pcm);
 	int bsize;          cfg.lookupValue("buffer_size", bsize);
@@ -358,7 +363,7 @@ int main(int argc, char ** argv) {
 
 	    }
 	}
-	cfg.writeFile(user_cfg_path.c_str());
+	cfg.writeFile(user_cfg_fqn->c_str());
 	return 0;	
 }
 
