@@ -61,8 +61,8 @@ int main(int argc, char ** argv) {
 	cerr << "Reading configuration from " << cfg_fqn << endl;
 
 	if (!(cfg_stat.st_mode & S_IRUSR)) {
-		cerr << "Cannot read from " << cfg_fqn <<
-		        ": insufficient permission" << endl;
+		cerr << "Cannot read from " << cfg_fqn
+		     << ": insufficient permission" << endl;
 		exit(-1);
 	}
 
@@ -249,10 +249,10 @@ int main(int argc, char ** argv) {
 #endif
 #ifdef SUPPORT_SERIALPEDAL
 	try {
-		if (!pedal_dev.compare("serialpedal"))
+		if (!pedal_dev.compare("serial"))
 			pedal = new SerialPedal(&controller, serial_dev, 0.01, verbosity);
 	} catch (const char *e) {
-		cout << "Caught exception creating Serial Pedal object:\n"
+		cout << "Caught exception creating SerialPedal object:\n"
 		     << e << endl;
 		exit(-1);
 	}
@@ -373,8 +373,13 @@ int usage(void)
         cout << "\t--pedal-device=class | -Pclass: Set pedal device class" << endl;
         cout << "\t        Supported classes: comedi; minilab1080" << endl;
         cout << "\t                           modwheel (wheel on MIDI controller)" << endl;
-        cout << "\t                           dummy (fixed value 0.75)" << endl;
-        cout << "\t--buffer-size=size | -bsize:    Set audio buffer length to size" << endl;
+	cout << "\t                           serial (read from serial port:" << endl;
+	cout << "\t                                   see --serial-device)" << endl;
+	cout << "\t                           dummy (fixed value 0.75)" << endl;
+#ifdef SUPPORT_SERIALPEDAL
+	cout << "\t--serial-device=dev | -Cdev:    Specify device node for a serial pedal" << endl;
+#endif
+	cout << "\t--buffer-size=size | -bsize:    Set audio buffer length to size" << endl;
         cout << "\t--sample-rate=rate | -rrate:    Set audio sample rate in Hz" << endl;
         cout << "\t--polyphony=voices | -pvoices:  Set max number of sounding voices" << endl;
         cout << "\t--threads=thrds | -ttrhds:      Use thrds threads for synthesis" << endl;
@@ -387,9 +392,7 @@ int usage(void)
         cout << "\t        1 = report midi note on/off;" << endl;
         cout << "\t        2 = also report changes of pedal value" << endl;
         cout << "\t--list-midi | -l:               List midi input devices and exit" << endl;
-#ifdef SUPPORT_SERIALPEDAL
 	cout << "\t--serial-dev=dev | -Cdev:       Read serial pedal data from dev" << endl;
-#endif
         cout << "\t--help | -h:                    Print usage and exit" << endl;
 
 	return 0;
