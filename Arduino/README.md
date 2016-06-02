@@ -44,7 +44,7 @@ be adjusted (quoted from the top of the file):
 constexpr int potPin { A0 };
 
 //   The number of reads averaged to produce the
-//   output value (noise reduction measure
+//   output value (noise reduction measure)
 constexpr unsigned int readBufSize { 1 };
 
 //   External LED pin
@@ -101,6 +101,6 @@ input pins are internally multiplexed
 on to a sample-and-hold capacitor, so that as long as successive reads
 are always from the same pin rather than switching between pins at
 possibly different voltages, the limitation is one of slew rate rather than
-of accuracy. The analogue presents a non-resistive load to the
+of accuracy. The analogue input presents a non-resistive load to the
 voltage source under these circumstances, and the potentiometer
 fitted to this pedal (100K) worked just fine.
