@@ -66,7 +66,7 @@ class ViolinFingering {
      * @return String recommended for performance of the note
      * @throw char* Note is below the instrument's range
      */
-    int getStringHint(int midi) const throw (const char *);
+    int getStringHint(int midi) const;
 
     /**
      * Find where a string should be stopped to generate the given midi note

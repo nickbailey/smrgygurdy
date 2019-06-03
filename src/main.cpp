@@ -1,4 +1,3 @@
-#include <cstdio>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -106,97 +105,100 @@ int main(int argc, char ** argv) {
 	  {"help",         no_argument,       0, 'h'},
 	  {0, 0, 0, 0}
 	};
-	int c, option_index;
-	do {
-		c = getopt_long (argc, argv,
-				 "d:a:P:b:r:p:t:M:m:T:g:S:s:lv::C:h",
-		                 long_options, &option_index);
-		switch (c) {
-		    case 'd':
-			pcm = optarg;
-			cfg.lookup("pcm") = pcm;
-			cout << "Using alsa device \"" << pcm << "\"" << endl;
-			break;
-		    case 'a':
-			autofade = atof(optarg);
-			cfg.lookup("model.autofade") = autofade;
-			cout << "Fade out below pedal = " << autofade << endl;
-			break;
-		    case 'P':
-			pedal_dev = optarg;
-			cfg.lookup("pedal.kind") = pedal_dev;
-			cout << "Using pedal device \"" << pedal_dev << "\"" << endl;
-			break;
-		    case 'b':
-			bsize = atoi(optarg);
-			cfg.lookup("buffer_size") = bsize;
-			cout << "Audio buffer size = " << bsize << endl;
-			break;
-		    case 'r':
-			rate = atoi(optarg);
-			cfg.lookup("sample_rate") = rate;
-			cout << "Audio sample rate = " << rate << endl;
-			break;
-		    case 'p':
-			poly = atoi(optarg);
-			cfg.lookup("polyphony") = poly;
-			cout << "Polyphony: " << poly << " voices" << endl;
-			break;
-		    case 't':
-			noThreads = atoi(optarg);
-			cfg.lookup("threads") = noThreads;
-			cout << noThreads << " concurrent threads" << endl;
-			break;
-		    case 'M':
-			keyboard_id = atoi(optarg);
-			cfg.lookup("midi.controller_id") = keyboard_id;
-			cout << "Midi controller has id " << keyboard_id << endl;
-			break;
-		    case 'm':
-			keyboard_port = atoi(optarg);
-			cfg.lookup("midi.controller_port") = keyboard_port;
-			cout << "Midi controller uses port " << keyboard_port << endl;
-			break;
-		    case 'T':
-			temperament = 
-			  ViolinFingering::setTemperament(ViolinFingering::Temperament(atoi(optarg)));
-			cfg.lookup("temperament") = temperament;
-			cout << "Temperament is " << ViolinFingering::tuningSets[temperament].longdesc;
-			break;
-		    case 'g':
-			output_gain = atof(optarg);
-			cfg.lookup("model.output_gain") = output_gain;
-			cout << "Output gain set to " << output_gain << endl;
-			break;
-		    case 'S':
-			v_bow_max = atof(optarg);
-			cfg.lookup("model.bow_speed_max") = v_bow_max;
-			cout << "Bow speed (full pedal) set to " << v_bow_max <<endl;
-			break;
-		    case 's':
-			v_bow_min = atof(optarg);
-			cfg.lookup("model.bow_speed_min") = v_bow_min;
-			cout << "Bow speed (no pedal) set to " << v_bow_min << endl;
-			break;
-		    case 'l':
-			exit (system("aconnect -li"));
-		    case 'C':
-			serial_dev = optarg;
-			cfg.lookup("pedal.serial_dev") = serial_dev;
-			cout << "Pedal connected to " << serial_dev << endl;
-			break;
-		    case 'h':
-			exit (usage());
-		    case 'v':
-			verbosity = 1;
-			if (optarg > 0) verbosity = atoi(optarg);
-			cfg.lookup("verbosity") = verbosity;
-		    case '?':
-			// getopt_long already printed an error message
-			break;
-		}
+	
+	{
+		int c, option_index;
+		do {
+			c = getopt_long (argc, argv,
+					"d:a:P:b:r:p:t:M:m:T:g:S:s:lv::C:h",
+					long_options, &option_index);
+			switch (c) {
+			case 'd':
+				pcm = optarg;
+				cfg.lookup("pcm") = pcm;
+				cout << "Using alsa device \"" << pcm << "\"" << endl;
+				break;
+			case 'a':
+				autofade = atof(optarg);
+				cfg.lookup("model.autofade") = autofade;
+				cout << "Fade out below pedal = " << autofade << endl;
+				break;
+			case 'P':
+				pedal_dev = optarg;
+				cfg.lookup("pedal.kind") = pedal_dev;
+				cout << "Using pedal device \"" << pedal_dev << "\"" << endl;
+				break;
+			case 'b':
+				bsize = atoi(optarg);
+				cfg.lookup("buffer_size") = bsize;
+				cout << "Audio buffer size = " << bsize << endl;
+				break;
+			case 'r':
+				rate = atoi(optarg);
+				cfg.lookup("sample_rate") = rate;
+				cout << "Audio sample rate = " << rate << endl;
+				break;
+			case 'p':
+				poly = atoi(optarg);
+				cfg.lookup("polyphony") = poly;
+				cout << "Polyphony: " << poly << " voices" << endl;
+				break;
+			case 't':
+				noThreads = atoi(optarg);
+				cfg.lookup("threads") = noThreads;
+				cout << noThreads << " concurrent threads" << endl;
+				break;
+			case 'M':
+				keyboard_id = atoi(optarg);
+				cfg.lookup("midi.controller_id") = keyboard_id;
+				cout << "Midi controller has id " << keyboard_id << endl;
+				break;
+			case 'm':
+				keyboard_port = atoi(optarg);
+				cfg.lookup("midi.controller_port") = keyboard_port;
+				cout << "Midi controller uses port " << keyboard_port << endl;
+				break;
+			case 'T':
+				temperament = 
+				ViolinFingering::setTemperament(ViolinFingering::Temperament(atoi(optarg)));
+				cfg.lookup("temperament") = temperament;
+				cout << "Temperament is " << ViolinFingering::tuningSets[temperament].longdesc;
+				break;
+			case 'g':
+				output_gain = atof(optarg);
+				cfg.lookup("model.output_gain") = output_gain;
+				cout << "Output gain set to " << output_gain << endl;
+				break;
+			case 'S':
+				v_bow_max = atof(optarg);
+				cfg.lookup("model.bow_speed_max") = v_bow_max;
+				cout << "Bow speed (full pedal) set to " << v_bow_max <<endl;
+				break;
+			case 's':
+				v_bow_min = atof(optarg);
+				cfg.lookup("model.bow_speed_min") = v_bow_min;
+				cout << "Bow speed (no pedal) set to " << v_bow_min << endl;
+				break;
+			case 'l':
+				exit (system("aconnect -li"));
+			case 'C':
+				serial_dev = optarg;
+				cfg.lookup("pedal.serial_dev") = serial_dev;
+				cout << "Pedal connected to " << serial_dev << endl;
+				break;
+			case 'h':
+				exit (usage());
+			case 'v':
+				verbosity = 1;
+				if (optarg > 0) verbosity = atoi(optarg);
+				cfg.lookup("verbosity") = verbosity;
+			case '?':
+				// getopt_long already printed an error message
+				break;
+			}
 
-	} while (c != -1);
+		} while (c != -1);
+	}
 	
 	// Assign Temperament
 	ViolinFingering::setTemperament(ViolinFingering::Temperament(temperament));
@@ -279,92 +281,100 @@ int main(int argc, char ** argv) {
 	cout << "      S/Shift-S to set bow speed (no/full pedal)" << endl;
 	cout << "      T to change temperament" << endl;
 
-	  while( (c = getchar()) != 'q') {
-	    switch (c) {
-	      case 'c':
-	        cout << "Bowing at " << controller.get_bow_speed()
-                     << "m/s because pedal value is "
-	             << pedal->get_value() << endl;
-		cout << "Bow speed limits: " << controller.min_speed
-		     << "..." << controller.max_speed << endl;
-		cout << "Output gain: " << output_gain << endl;
-		cout << "Temperament: "
-		     << ViolinFingering::tuningSets[ViolinFingering::getTemperament()].longdesc
-		     << endl;
-	        break;
+	{
+		char ki;
+		do {
+			cin >> ki;
 
-	      case 'g':
-		cout << "Current output gain = " << output_gain << endl
-		     << "New value? ";
-                while(!(cin >> output_gain)){
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    cout << "Invalid.  Enter floating-point output gain (e.g. 1.5): ";
-                }
-		mainModel->setOutputGain(output_gain);
-		cfg.lookup("model.output_gain") = output_gain;
-		break;
+			switch (ki) {
+			case 'c':
+				cout << "Bowing at " << controller.get_bow_speed()
+				<< "m/s because pedal value is "
+				<< pedal->get_value() << endl;
+				cout << "Bow speed limits: " << controller.min_speed
+				<< "..." << controller.max_speed << endl;
+				cout << "Output gain: " << output_gain << endl;
+				cout << "Temperament: "
+				<< ViolinFingering::tuningSets[ViolinFingering::getTemperament()].longdesc
+				<< endl;
+				break;
 
-	      case 'S':
-		cout << "Current bow speed (full pedal) = " << v_bow_max << endl
-		     << "New value? ";
-                while(!(cin >> v_bow_max)){
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    cout << "Invalid.  Enter max bow speed in m/s: ";
-                }
-		controller.max_speed = v_bow_max;
-		controller.speedChange(pedal->get_value());
-		cfg.lookup("model.bow_speed_max") = v_bow_max;
-		break;
+			case 'g':
+				cout << "Current output gain = " << output_gain << endl
+				<< "New value? ";
+				while(!(cin >> output_gain)){
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Invalid.  Enter floating-point output gain (e.g. 1.5): ";
+				}
+				mainModel->setOutputGain(output_gain);
+				cfg.lookup("model.output_gain") = output_gain;
+				break;
 
-	      case 's':
-		cout << "Current bow speed (nol pedal) = " << v_bow_min << endl
-		     << "New value? ";
-                while(!(cin >> v_bow_min)){
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    cout << "Invalid.  Enter minimum bow speed in m/s: ";
-                }
-		controller.min_speed = v_bow_min;
-		controller.speedChange(pedal->get_value());
-		cfg.lookup("model.bow_speed_min") = v_bow_min;
-		break;
-		
-	      case 't':
-		cout << "Current temperament = "
-                     << ViolinFingering::tuningSets[ViolinFingering::getTemperament()].longdesc
-                     << endl
-		     << "Select from the following:" << endl;
-		for (ViolinFingering::Temperament i = ViolinFingering::Temperament(0);
-		     i < ViolinFingering::END;
-		     i = ViolinFingering::Temperament(i+1) ) {
-			cout << '\t' << i << ": "
-			     << ViolinFingering::tuningSets[i].longdesc
-			     << endl;
-		}
-                while(!(cin >> temperament)){
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                    cout << "Invalid.  Enter a temperament number from the list: ";
-                }
-		temperament = 
-		  ViolinFingering::setTemperament(ViolinFingering::Temperament(temperament));
-		cfg.lookup("midi.temperament") = temperament;
-		break;
-		     
+			case 'S':
+				cout << "Current bow speed (full pedal) = " << v_bow_max << endl
+				<< "New value? ";
+				while(!(cin >> v_bow_max)){
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Invalid.  Enter max bow speed in m/s: ";
+				}
+				controller.max_speed = v_bow_max;
+				controller.speedChange(pedal->get_value());
+				cfg.lookup("model.bow_speed_max") = v_bow_max;
+				break;
 
-	      case EOF:      break;
-	      case '\n':     break;
-	      case ' ':      break;
+			case 's':
+				cout << "Current bow speed (nol pedal) = " << v_bow_min << endl
+				<< "New value? ";
+				while(!(cin >> v_bow_min)){
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Invalid.  Enter minimum bow speed in m/s: ";
+				}
+				controller.min_speed = v_bow_min;
+				controller.speedChange(pedal->get_value());
+				cfg.lookup("model.bow_speed_min") = v_bow_min;
+				break;
+				
+			case 't':
+				cout << "Current temperament = "
+				<< ViolinFingering::tuningSets[ViolinFingering::getTemperament()].longdesc
+				<< endl
+				<< "Select from the following:" << endl;
+				for (ViolinFingering::Temperament i = ViolinFingering::Temperament(0);
+				i < ViolinFingering::END;
+				i = ViolinFingering::Temperament(i+1) ) {
+					cout << '\t' << i << ": "
+					<< ViolinFingering::tuningSets[i].longdesc
+					<< endl;
+				}
+				while(!(cin >> temperament)){
+				cin.clear();
+				cin.ignore(numeric_limits<streamsize>::max(), '\n');
+				cout << "Invalid.  Enter a temperament number from the list: ";
+				}
+				temperament = 
+				ViolinFingering::setTemperament(ViolinFingering::Temperament(temperament));
+				cfg.lookup("midi.temperament") = temperament;
+				break;
+				
+			case 'q':      break;
+			case EOF:      break;
 
-	      default:
-	        cout << (char)c << "? eh?" << endl;
+			case '\n':     break;
+			case ' ':      break;
 
-	    }
+			default:
+				cout << ki << "? eh?" << endl;
+
+			}
+		}  while (ki != 'q');
+
+		cfg.writeFile(user_cfg_fqn->c_str());
+
+		exit(0);
 	}
-	cfg.writeFile(user_cfg_fqn->c_str());
-	return 0;	
 }
 
 int usage(void)

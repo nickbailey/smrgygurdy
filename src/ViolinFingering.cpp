@@ -17,7 +17,7 @@ ViolinFingering::Temperament ViolinFingering::setTemperament(Temperament t) {
   return getTemperament();
 }
 
-int ViolinFingering::getStringHint(int midi) const throw (const char *) {
+int ViolinFingering::getStringHint(int midi) const {
   
   // Using the current temperament...
   const TuningSet &t = tuningSets[theTemperament];
