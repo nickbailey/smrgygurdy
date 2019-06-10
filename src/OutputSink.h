@@ -31,6 +31,26 @@ class OutputSink {
 	virtual void close() = 0;
 	
 	virtual ~OutputSink() { }
+	
+	/**
+	 * Some OutputSinks need to set the sample rate and buffer size
+	 * themselves, overriding the SMRGyGurdy configured values.
+	 * Query the required sample rate, or 0 if there is no such
+	 * requirement.
+	 * 
+	 * @return the sample rate required by the audio system
+	 */
+	virtual unsigned int sysAudioRate(void) const { return 0; }
+
+	/**
+	 * Some OutputSinks need to set the sample rate and buffer size
+	 * themselves, overriding the SMRGyGurdy configured values.
+	 * Query the required buffer size, or 0 if there is no such
+	 * requirement.
+	 * 
+	 * @return the buffer size in frames required by the audio system
+	 */
+	virtual unsigned int sysBufferSize(void) const { return 0; }
 
 	/* Exception List */
 

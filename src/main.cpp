@@ -209,7 +209,24 @@ int main(int argc, char ** argv) {
 	PlayoutThread *pothreads[noThreads];	/* Threads which render sound data */
 	OutputSink *sink;			/* Polyphonic sink to be used by all threads */
 
-	sink = new OutputMixer(noThreads, pcm, bsize, rate);
+	int sysBSize {bsize};
+	int sysRate  {rate};
+	
+	sink = new OutputMixer(noThreads, pcm, sysBSize, sysRate);
+	
+	if (sink->sysBufferSize()) {
+		sysBSize = sink->sysBufferSize();
+		if (sysBSize != bsize)
+			cout << "Audio system overrides configured buffer size. Using "
+			     << sysBSize << ".\n";
+	}
+	
+	if (sink->sysAudioRate()) {
+		sysRate  = sink->sysAudioRate();
+		if (sysRate != rate)
+			cout << "Audio system overrides configured sample rate. Using "
+			     << sysBSize << ".\n";
+	}
 
 	/* This will assign SoundModelMono instances as equally as possible to each SoundModelPoly,
 	   one of which will be given to each thread */
@@ -227,7 +244,7 @@ int main(int argc, char ** argv) {
 
 	// Create Playout Threads
 	for(int i = 0; i < noThreads; i++) {
-		pothreads[i] = new PlayoutThread(sink, subModels[i], bsize);
+		pothreads[i] = new PlayoutThread(sink, subModels[i], sysBSize);
 		pothreads[i]->start();
 	}
 
