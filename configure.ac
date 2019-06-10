@@ -104,5 +104,21 @@ fi
 dnl Let the application know which pedal classes are supported
 AC_SUBST([PEDAL_CLASSES])
 
+dnl Whcih audio back-ends get built?
+
+AC_ARG_WITH([jackd],
+            AS_HELP_STRING([--without-jackd],
+                           [Omit jackd backend support]))
+AS_IF([test "x$with_serialpedal" "!=" "xno"], [
+    AC_DEFINE([SUPPORT_JACKD], [],
+              [Build support for jackd])
+    AUDIO_BACKEND_CLASSES="$AUDIO_BACKEND_CLASSES JackOutputMixer.\$(OBJEXT)"
+])
+
+dnl Let the application know which pedal classes are supported
+AC_SUBST([AUDIO_BACKEND_CLASSES])
+
+
+
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

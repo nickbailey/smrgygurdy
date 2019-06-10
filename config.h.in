@@ -110,6 +110,9 @@
 /* Build support for comedi interfaces */
 #undef SUPPORT_COMEDI
 
+/* Build support for jackd */
+#undef SUPPORT_JACKD
+
 /* Include support for the MiniLAB1008 interface */
 #undef SUPPORT_MINILAB1008
 

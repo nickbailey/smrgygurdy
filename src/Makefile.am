@@ -13,10 +13,12 @@ smrgygurdy_SOURCES = \
         DummyPedal.cpp ModulationPedal.cpp \
         ViolinFingering.cpp
 
-EXTRA_smrgygurdy_SOURCES = MiniLAB1080.cpp Comedi.cpp SerialPedal.cpp
+EXTRA_smrgygurdy_SOURCES = MiniLAB1080.cpp Comedi.cpp SerialPedal.cpp \
+                           JackOutputMixer.cpp
 
 smrgygurdy_LDADD = $(PEDAL_CLASSES) \
+                   $(AUDIO_BACKEND_CLASSES) \
                    $(ARTIFASTRING_LIBS) $(LIBCONFIGXX_LIBS) \
                    $(LIBHID_LIBS) $(BOGIO_LIBS)
-smrgygurdy_DEPENDENCIES = $(PEDAL_CLASSES)
+smrgygurdy_DEPENDENCIES = $(PEDAL_CLASSES) $(AUDIO_BACKEND_CLASSES)
  
