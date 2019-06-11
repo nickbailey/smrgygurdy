@@ -8,10 +8,6 @@
  * Currently the number of sources must be specified on creation of
  * the sink. Additionally, threads using this source will block after
  * writing to the mixer until all other threads have also written.
-
- * It should be possible in the future to use a vector of
- * queues to allow asynchronous writing as well as the ability to add
- * and remove sources on the fly.
  */
 class OutputMixer : public OutputSink {
 	
@@ -23,17 +19,6 @@ class OutputMixer : public OutputSink {
 	Lock bufflock, countlock;
 
 	public:
-
-
-	    /**
-		 * Create a new instance of OutputMixer
-		 *
-		 * @param sources Number of sources which will use the mixer
-		 * @param outputHandle OutputSink to write data to
-		 * @param bufferSize Size of buffer chunks to write
-		 */
-		OutputMixer(int sources, OutputSink *outputHandle, int bufferSize);
-
 		/**
 		 * Create a new OutputMixer with its own aggregated OutputDirect
 		 *
@@ -65,14 +50,4 @@ class OutputMixer : public OutputSink {
  		 */
 		virtual void close();	
 
-	private:
-		/**
-		 * Do the constructors' work
-		 */
-		void init(int sources, OutputSink *outputHandle, int bufferSize);
-		/**
-		 * Whether to delete our OutputHandle in the destructor
-		 */
-		bool privateOutputHandle;
-		
 };

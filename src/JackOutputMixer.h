@@ -1,6 +1,8 @@
 #include "Lock.h"
 #include "OutputSink.h"
 
+#include <jack/jack.h>
+
 /**
  * Output sink which mixes data from multiple sources before sending them to another sink.
  * 
@@ -18,21 +20,11 @@ class JackOutputMixer : public OutputSink {
 	
 	int playoutno;
 	int count;
-	short *buffer;
-	int bufferSize;
-	OutputSink *outputHandle;
+	jack_default_audio_sample_t *buffer;
+	size_t bufferSize;
 	Lock bufflock, countlock;
 
 	public:
-		/**
-		 * Create a new instance of OutputMixer
-		 *
-		 * @param sources Number of sources which will use the mixer
-		 * @param outputHandle OutputSink to write data to
-		 * @param bufferSize Size of buffer chunks to write
-		 */
-		JackOutputMixer(int sources, OutputSink *outputHandle, int bufferSize);
-
 		/**
 		 * Create a new OutputMixer with its own aggregated OutputDirect
 		 *
@@ -70,13 +62,17 @@ class JackOutputMixer : public OutputSink {
 		virtual void close();
 		
 	private:
+		jack_client_t *client;
+		jack_port_t *output_port;
 		/**
-		 * Do the constructors' work
+		 * The callback function passed to jackd has to be static
+		 * so C can deal with it. The client data payload must
+		 * be set to identify the object instance at run-time (pass this).
+		 * 
+		 * @param jack_nframes_t Number of frames requested
+		 * @param instance this pointer of object being called-back
+		 * @return success code of the objects process routine
 		 */
-		void init(int sources, OutputSink *outputHandle, int bufferSize);
-		/**
-		 * Whether to delete our OutputHandle in the destructor
-		 */
-		bool privateOutputHandle;
-		
+		static int process(jack_nframes_t frames, void* o);
+		int process_delegate(jack_nframes_t frames);
 };

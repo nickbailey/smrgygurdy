@@ -1,42 +1,20 @@
 #include "JackOutputMixer.h"
-#include "Lock.h"
-#include "OutputSink.h"
-#include "OutputDirect.h"
-
-#include <cstring>
 
 #include <iostream>
-
-void JackOutputMixer::init(int playoutno, OutputSink *outputHandle, int length) {
-
-	this->playoutno = playoutno;
-	this->count = playoutno;
-	this->outputHandle = outputHandle;
-	this->bufferSize = length;
-	this->buffer = new short [bufferSize];
-
-	/* Remove this if you like the sound of uninitialised data */
-	memset(this->buffer, 0, bufferSize*sizeof(short));
-}
-
-// The following constructor is never used.
-// It might be left over from a design change. I'm deprecating it.
-// Nick, 11 June 2019
-JackOutputMixer::JackOutputMixer(int playoutno, OutputSink *outputHandle, int length) {
-	init(playoutno, outputHandle, length);
-	privateOutputHandle = false;	// Caller's OutputDirect, don't delete
-	std::cerr << "JackOutputMixer construction with an supplied outputHandle is deprecated\n";
-}
+#include <limits>
 
 JackOutputMixer::JackOutputMixer(int sources, std::string pcm, int bufferSize, int rate) {
-	init(sources, new OutputDirect(pcm, bufferSize, rate), bufferSize);
-	privateOutputHandle = true;	// My OutputDirect, delete it later
+	this->playoutno = sources;
+	this->count = sources;
+	this->bufferSize = bufferSize;
+	this->buffer = new jack_default_audio_sample_t [bufferSize];
+
+	/* Remove this if you like the sound of uninitialised data */
+	std::fill(buffer, buffer + bufferSize, 0);
 }
 
 JackOutputMixer::~JackOutputMixer() {
-
 	delete[] buffer;
-	if (privateOutputHandle) delete outputHandle;
 }
 
 
@@ -57,8 +35,17 @@ void JackOutputMixer::writeSamples(short buffer[], int length) {
 		
 		// Samples written and buffer reset
 		bufflock.acquire();
-		outputHandle->writeSamples(this->buffer, length);
-		memset(this->buffer, 0, bufferSize*sizeof(short));
+		
+		// Scale the buffer from shorts to floats in range +/- 1.0
+		for (int i{0}; i < length; i++)
+			buffer[i] /= std::numeric_limits<short>::max();
+		
+		// This is where the action is
+		jack_nframes_t nf(jack_cycle_wait(client));
+		process_delegate(nf);
+		jack_cycle_signal (client, 0);
+		
+		std::fill(buffer, buffer + length, 0);
 		bufflock.release();
 		count = playoutno;
 		countlock.broadcast();
@@ -71,5 +58,20 @@ void JackOutputMixer::writeSamples(short buffer[], int length) {
  
 void JackOutputMixer::close() {
 
-	outputHandle->close();
+	// close the stream
 }
+
+int JackOutputMixer::process(jack_nframes_t frames, void* o) {
+	return static_cast<JackOutputMixer*>(o)->process_delegate(frames);
+}
+
+int JackOutputMixer::process_delegate(jack_nframes_t frames) {
+	jack_default_audio_sample_t* in(
+		static_cast<jack_default_audio_sample_t*>(
+			jack_port_get_buffer (output_port, frames)
+		));
+	std::copy(buffer, buffer + frames, in);
+	return 0;
+}
+
+

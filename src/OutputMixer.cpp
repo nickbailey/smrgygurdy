@@ -1,37 +1,27 @@
-#include "OutputMixer.h"
+#include "Lock.h"
 #include "OutputSink.h"
+#include "OutputMixer.h"
 #include "OutputDirect.h"
+
 #include <cstring>
 
 #include <iostream>
 
-void OutputMixer::init(int playoutno, OutputSink *outputHandle, int length) {
-
-	this->playoutno = playoutno;
-	this->count = playoutno;
-	this->outputHandle = outputHandle;
-	this->bufferSize = length;
+OutputMixer::OutputMixer(int sources, std::string pcm, int bufferSize, int rate) {
+	this->playoutno = sources;
+	this->count = sources;
+	this->outputHandle = new OutputDirect(pcm, bufferSize, rate);
+	this->bufferSize = bufferSize;
 	this->buffer = new short [bufferSize];
 
 	/* Remove this if you like the sound of uninitialised data */
 	memset(this->buffer, 0, bufferSize*sizeof(short));
 }
 
-OutputMixer::OutputMixer(int playoutno, OutputSink *outputHandle, int length) {
-	init(playoutno, outputHandle, length);
-	privateOutputHandle = false;	// Caller's OutputDirect, don't delete
-	std::cerr << "OutputMixer construction with an supplied outputHandle is deprecated\n";
-}
-
-OutputMixer::OutputMixer(int sources, std::string pcm, int bufferSize, int rate) {
-	init(sources, new OutputDirect(pcm, bufferSize, rate), bufferSize);
-	privateOutputHandle = true;	// My OutputDirect, delete it later
-}
-
 OutputMixer::~OutputMixer() {
 
 	delete[] buffer;
-	if (privateOutputHandle) delete outputHandle;
+	delete outputHandle;
 }
 
 

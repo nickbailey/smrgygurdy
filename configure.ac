@@ -110,6 +110,9 @@ AC_ARG_WITH([jackd],
             AS_HELP_STRING([--without-jackd],
                            [Omit jackd backend support]))
 AS_IF([test "x$with_jackd" "!=" "xno"], [
+    PKG_CHECK_MODULES([JACKD], [jack], [], [
+        AC_MSG_ERROR([jackd support was requested but I can't find the jack library])
+    ])
     AC_DEFINE([SUPPORT_JACKD], [],
               [Build support for jackd])
     AUDIO_BACKEND_CLASSES="$AUDIO_BACKEND_CLASSES JackOutputMixer.\$(OBJEXT)"
