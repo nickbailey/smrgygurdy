@@ -20,6 +20,7 @@ void OutputMixer::init(int playoutno, OutputSink *outputHandle, int length) {
 OutputMixer::OutputMixer(int playoutno, OutputSink *outputHandle, int length) {
 	init(playoutno, outputHandle, length);
 	privateOutputHandle = false;	// Caller's OutputDirect, don't delete
+	std::cerr << "OutputMixer construction with an supplied outputHandle is deprecated\n";
 }
 
 OutputMixer::OutputMixer(int sources, std::string pcm, int bufferSize, int rate) {

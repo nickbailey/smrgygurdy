@@ -15,14 +15,17 @@
 #include "PlayoutThread.h"
 #include "Pedal.h"
 #include "OutputMixer.h"
+#ifdef SUPPORT_JACKD
+#	include "JackOutputMixer.h"
+#endif
 #ifdef SUPPORT_MINILAB1008
-#include "MiniLAB1008.h"
+#	include "MiniLAB1008.h"
 #endif
 #ifdef SUPPORT_COMEDI
-#include "Comedi.h"
+#	include "Comedi.h"
 #endif
 #ifdef SUPPORT_SERIALPEDAL
-#include "SerialPedal.h"
+#	include "SerialPedal.h"
 #endif
 #include "ModulationPedal.h"
 #include "DummyPedal.h"
@@ -212,7 +215,7 @@ int main(int argc, char ** argv) {
 	int sysBSize {bsize};
 	int sysRate  {rate};
 	
-	sink = new OutputMixer(noThreads, pcm, sysBSize, sysRate);
+	sink = new JackOutputMixer(noThreads, pcm, sysBSize, sysRate);
 	
 	if (sink->sysBufferSize()) {
 		sysBSize = sink->sysBufferSize();

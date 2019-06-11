@@ -44,11 +44,12 @@ void Lock::wait(int time){
 	struct timespec   ts;
 	struct timeval    tp;
 	gettimeofday(&tp, NULL);
-	ts.tv_sec  = tp.tv_sec;
-	ts.tv_sec = ts.tv_sec+time;
+	//ts.tv_sec  = tp.tv_sec;
+	ts.tv_sec = tp.tv_sec+time;
 
 	//Wait
-	if (pthread_cond_timedwait(&status, &lock, &ts)!=0)
+	int wait_result(pthread_cond_timedwait(&status, &lock, &ts));
+	if (wait_result != 0 && wait_result != ETIMEDOUT)
 		throw new TimedWaitFailException();
 }
 
