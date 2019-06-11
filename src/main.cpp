@@ -215,7 +215,7 @@ int main(int argc, char ** argv) {
 	int sysBSize {bsize};
 	int sysRate  {rate};
 	
-	sink = new OutputMixer(noThreads, pcm, sysBSize, sysRate);
+	sink = new JackOutputMixer(noThreads, pcm, sysBSize, sysRate);
 	
 	if (sink->sysBufferSize()) {
 		sysBSize = sink->sysBufferSize();

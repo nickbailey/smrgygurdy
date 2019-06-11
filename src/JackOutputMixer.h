@@ -64,6 +64,12 @@ class JackOutputMixer : public OutputSink {
 	private:
 		jack_client_t *client;
 		jack_port_t *output_port;
+                //const char **ports;
+                const char *client_name = "SMRGyGurdy";
+                const char *server_name = NULL;
+                jack_options_t options = JackNullOption;
+                jack_status_t status;
+                
 		/**
 		 * The callback function passed to jackd has to be static
 		 * so C can deal with it. The client data payload must

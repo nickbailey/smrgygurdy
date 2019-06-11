@@ -11,9 +11,37 @@ JackOutputMixer::JackOutputMixer(int sources, std::string pcm, int bufferSize, i
 
 	/* Remove this if you like the sound of uninitialised data */
 	std::fill(buffer, buffer + bufferSize, 0);
+        
+	// Communicate with jack
+	client = jack_client_open (client_name, options, &status, server_name);
+	if (client == nullptr) {
+		std::cerr << "jack_client_open() failed, "
+			     "status = " << status << std::endl;
+		if (status & JackServerFailed) {
+			std::cerr << "Unable to connect to JACK server\n";
+		}
+		exit (1);
+	}
+	
+	output_port = jack_port_register (client, "output",
+					  JACK_DEFAULT_AUDIO_TYPE,
+					  JackPortIsOutput, 0);
+	
+	if (output_port == nullptr) {
+		std::cerr << "No more JACK ports available\n";
+		exit (1);
+	}
+	
+	//if (jack_set_process_thread(client, JackOutputMixer::process
+	
+	if (jack_activate (client)) {
+		std::cerr << "Cannot activate client\n";
+		exit (1);
+	}
 }
 
 JackOutputMixer::~JackOutputMixer() {
+	jack_client_close(client);
 	delete[] buffer;
 }
 
@@ -43,6 +71,7 @@ void JackOutputMixer::writeSamples(short buffer[], int length) {
 		// Wait until jack needs samples.
 		jack_nframes_t nf(jack_cycle_wait(client));
 		// Copy the current buffer over to jack.
+		std::cout << '.';
 		process_delegate(nf);
 		// Tell jack it can carry on.
 		jack_cycle_signal (client, 0);
