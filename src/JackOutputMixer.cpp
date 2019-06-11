@@ -40,9 +40,11 @@ void JackOutputMixer::writeSamples(short buffer[], int length) {
 		for (int i{0}; i < length; i++)
 			buffer[i] /= std::numeric_limits<short>::max();
 		
-		// This is where the action is
+		// Wait until jack needs samples.
 		jack_nframes_t nf(jack_cycle_wait(client));
+		// Copy the current buffer over to jack.
 		process_delegate(nf);
+		// Tell jack it can carry on.
 		jack_cycle_signal (client, 0);
 		
 		std::fill(buffer, buffer + length, 0);
