@@ -4,7 +4,8 @@ AM_LDFLAGS    = -pthread
 
 smrgygurdy_SOURCES = \
         SoundModelMono.cpp SoundModelPoly.cpp StringAllocator.cpp \
-        OutputDirect.cpp OutputMixer.cpp PlayoutThread.cpp \
+        ALSAAdaptor.cpp \
+        OutputMixer.cpp PlayoutThread.cpp \
         Pedal.cpp \
         Keyboard.cpp \
         Lock.cpp Thread.cpp \

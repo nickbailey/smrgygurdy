@@ -1,6 +1,6 @@
 #include "StringAllocator.h"
 #include "SoundModelMono.h"
-#include "OutputSink.h"
+#include "OutputAdaptor.h"
 #include "Lock.h"
 #include "ViolinFingering.h"
 #include <string>
@@ -30,7 +30,7 @@ void SoundModelMono::getSamples(short samples[], int bufferSize) {
 		release -= bufferSize;
 		if(release < 0) release = 0;
 	}  else {
-		memset(samples, 0, bufferSize*sizeof(short));
+            std::fill(samples, samples + bufferSize, 0);
 		/* This is negligable in terms of time compared to rendering the sound */
 	}
 

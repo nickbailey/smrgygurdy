@@ -1,4 +1,7 @@
-#include "OutputSink.h"
+#ifndef OUTPUTMIXER_H
+#define OUTPUTMIXER_H
+
+#include "OutputAdaptor.h"
 #include "Lock.h"
 
 
@@ -9,13 +12,13 @@
  * the sink. Additionally, threads using this source will block after
  * writing to the mixer until all other threads have also written.
  */
-class OutputMixer : public OutputSink {
+class OutputMixer {
 	
 	int playoutno;
 	int count;
-	short *buffer;
 	int bufferSize;
-	OutputSink *outputHandle;
+	OutputAdaptor* adaptor;
+	short *buffer;
 	Lock bufflock, countlock;
 
 	public:
@@ -25,7 +28,7 @@ class OutputMixer : public OutputSink {
 		 * Unlike the alternative constructor, the OutputDirect will
 		 * be automatically deleted on the instance's destrution
 		 */
-		OutputMixer(int sources, std::string pcm, int bufferSize, int rate);
+		OutputMixer(int sources, int bufferSize, OutputAdaptor* oa);
 
 		/**
 		 * Destructor
@@ -41,13 +44,9 @@ class OutputMixer : public OutputSink {
 		 * control.
 		 *
 		 * @param buffer Samples to be written
-		 * @param length Number of samples to be written
 		 */
-		virtual void writeSamples(short buffer[], int length);
-
-		/**
-		 * Close the audio system, will wait for sound to finish.
- 		 */
-		virtual void close();	
+		virtual void writeSamples(short buffer[]);
 
 };
+
+#endif

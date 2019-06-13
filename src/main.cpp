@@ -15,6 +15,7 @@
 #include "PlayoutThread.h"
 #include "Pedal.h"
 #include "OutputMixer.h"
+#include "ALSAAdaptor.h"
 #ifdef SUPPORT_JACKD
 #	include "JackOutputMixer.h"
 #endif
@@ -209,27 +210,30 @@ int main(int argc, char ** argv) {
 	// Create Models
 	SoundModelPoly *mainModel;		/* SoundModel to be passed to controller */
 	vector<SoundModel*> subModels;		/* SoundModels to be passed to various PlayoutThreads */
-	PlayoutThread *pothreads[noThreads];	/* Threads which render sound data */
-	OutputSink *sink;			/* Polyphonic sink to be used by all threads */
+	PlayoutThread* pothreads[noThreads];	/* Threads which render sound data */
+	OutputMixer*   mixer;			/* Mixes outputs from the sound rendering threads */
+	OutputAdaptor* sink;			/* Polyphonic sink to be used by all threads */
 
 	int sysBSize {bsize};
 	int sysRate  {rate};
 	
-	sink = new JackOutputMixer(noThreads, pcm, sysBSize, sysRate);
+	sink = new ALSAAdaptor(pcm, sysBSize, sysRate);
 	
-	if (sink->sysBufferSize()) {
-		sysBSize = sink->sysBufferSize();
+	if (sink->size()) {
+		sysBSize = sink->size();
 		if (sysBSize != bsize)
 			cout << "Audio system overrides configured buffer size. Using "
 			     << sysBSize << ".\n";
 	}
 	
-	if (sink->sysAudioRate()) {
-		sysRate  = sink->sysAudioRate();
+	if (sink->rate()) {
+		sysRate = sink->rate();
 		if (sysRate != rate)
 			cout << "Audio system overrides configured sample rate. Using "
 			     << sysBSize << ".\n";
 	}
+
+	mixer = new OutputMixer(noThreads, sysBSize, sink); 
 
 	/* This will assign SoundModelMono instances as equally as possible to each SoundModelPoly,
 	   one of which will be given to each thread */
@@ -238,7 +242,7 @@ int main(int argc, char ** argv) {
 
 	for(int i = 0; i < noThreads; i++) {
 		int models = perThread;
-		if(i < extra) models++;
+		if (i < extra) models++;
 		//cout << "Assigning " << models << " models to a thread" << endl;
 		subModels.push_back(new SoundModelPoly(models, output_gain));
 	}
@@ -247,7 +251,7 @@ int main(int argc, char ** argv) {
 
 	// Create Playout Threads
 	for(int i = 0; i < noThreads; i++) {
-		pothreads[i] = new PlayoutThread(sink, subModels[i], sysBSize);
+		pothreads[i] = new PlayoutThread(mixer, subModels[i], sysBSize);
 		pothreads[i]->start();
 	}
 
@@ -293,6 +297,8 @@ int main(int argc, char ** argv) {
 
 	pedal->start();
 
+	// Everything set up: commence audio output.
+	sink->commence();
 
 	// Console interaction
 	cout << "Enter Q to quit" << endl;

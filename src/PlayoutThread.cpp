@@ -1,12 +1,12 @@
 #include "SoundModelMono.h"
-#include "OutputSink.h"
+#include "OutputMixer.h"
 #include "Lock.h"
 #include "PlayoutThread.h"
 #include <vector>
 #include <cstring>
 #include <iostream>
 
-PlayoutThread::PlayoutThread(OutputSink * outputHandle, SoundModel *model, int bufferSize) {
+PlayoutThread::PlayoutThread(OutputMixer* outputHandle, SoundModel *model, int bufferSize) {
 
 	this->outputHandle = outputHandle;
 	this->model = model;
@@ -19,7 +19,7 @@ void PlayoutThread::run() {
 	short dataBuf[bufferSize];
 	while(isPlaying()) {
 		model->getSamples(dataBuf, bufferSize);
-		outputHandle->writeSamples(dataBuf, bufferSize);
+		outputHandle->writeSamples(dataBuf);
 	}
 
 }

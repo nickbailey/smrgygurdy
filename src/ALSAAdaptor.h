@@ -1,10 +1,10 @@
-#ifndef OUTPUT_DIRECT_H
-#define OUTPUT_DIRECT_H
+#ifndef ALSA_ADAPTOR_H
+#define ALSA_ADAPTOR_H
 
 #include <alsa/asoundlib.h>
 #include <string>
 #include <poll.h>
-#include "OutputSink.h"
+#include "OutputAdaptor.h"
 
 /**
  * Contains the connection to alsa, with a method to write directly to the PCM.
@@ -18,39 +18,30 @@
  * Sound is written to the output by writeSamples method, which must
  * be called periodically thereafter to create a continuous stream of sound to be played.
  */
-class OutputDirect : public OutputSink {
+class ALSAAdaptor : public OutputAdaptor {
 
-	snd_pcm_t *playbackHandle; ///< Handle for alsa PCM
-	int underrunning;         ///< State variable for underrun reporting
+	snd_pcm_t *playbackHandle;	///< Handle for alsa PCM
+	int underrunning;		///< State variable for underrun reporting
+	unsigned int bufsize;		///< Size of audio buffer
 	
-	/**
-	 * Open a pcm, returns playback handle for pcm
-	 *
-	 * @param pcmName name of pcm to open (e.g. "hw:0")
-	 * @param periodSize Size of period data that will be written
-	 * @param sampleRate Rate in hertz at which sound is sampled (Eg: 44100)
-	 * @throws UnableToOpenPCMException Thrown if PCM cannot be opened for whatever reason
-	 */
-	snd_pcm_t * openPcm(std::string pcmName, unsigned int periodSize, unsigned int rate);
-
-	public:
+public:
 
 	/**
-	 * Create new OutputDirect and prepare it for incoming data
+	 * Create new ALSAAdaptor and prepare it for incoming data
 	 *
 	 * This may fail if there is another application using the hardware.
 	 *	
 	 * @param pcmName name of pcm to open (e.g. "hw:0")
 	 * @param periodSize Size in samples of period data that will be written
 	 * @param sampleRate Rate in hertz at which sound is sampled (Eg: 44100)
-	 * @throws UnableToOpenPCMException Thrown if PCM cannot be opened for some reason (E.g it is in use)
+	 * @throws OutputAdaptorException Thrown if PCM cannot be opened for some reason (E.g it is in use)
 	 */
-	OutputDirect(std::string pcmName, unsigned int periodSize, unsigned int sampleRate);
+	ALSAAdaptor(std::string pcmName, unsigned int periodSize, unsigned int sampleRate);
 
 	/**
 	 * Destructor
 	 */
-	~OutputDirect();
+	virtual ~ALSAAdaptor();
 
 	/**
 	 * Write some samples to the output.
@@ -63,14 +54,18 @@ class OutputDirect : public OutputSink {
 	 *
 	 * @param length Number of samples in the buffer
 	 */
-	virtual void writeSamples(short buffer[], int length);
-	 
-	/**
-	 * Close the audio system, will wait for sound to finish
- 	 */
-	virtual void close();
+	virtual void writeSamples(short buffer[]);
 
-	protected:
+private:
+	/**
+	 * Open a pcm, returns playback handle for pcm
+	 *
+	 * @param pcmName name of pcm to open (e.g. "hw:0")
+	 * @param periodSize Size of period data that will be written
+	 * @param sampleRate Rate in hertz at which sound is sampled (Eg: 44100)
+	 * @throws OutputAdaptorException Thrown if PCM cannot be opened for whatever reason
+	 */
+	snd_pcm_t* openPcm(std::string pcmName, unsigned int periodSize, unsigned int rate);
 
 	/**
 	 * Report buffer underruns, but only once
@@ -82,14 +77,6 @@ class OutputDirect : public OutputSink {
 	 * succeeded.
 	 */
 	void reportUnderrun(void);
-
-	public:
-
-	/* Exception List */
-
-	/** Thrown when pcm could not be opened */
-	class UnableToOpenPCMException {};
-
 };
 
 #endif // AUDIO_OUTPUT_ADAPTOR_H

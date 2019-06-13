@@ -1,5 +1,5 @@
 #include "SoundModelMono.h"
-#include "OutputSink.h"
+#include "OutputMixer.h"
 #include "Thread.h"
 #include "Lock.h"
 
@@ -16,13 +16,13 @@
  */
 class PlayoutThread : public Thread {
 
-	OutputSink *outputHandle; /* Output where data should be written */
-	SoundModel *model;	      /* Model where data is generated */
-	bool playing;		      /* True while thread is playing */
-	Lock playLock;		      /* Lock to be used when accessing playing */
-	int bufferSize;		      /* Size of buffer to use when generating/writing */
+	OutputMixer *outputHandle; /* Output where data should be written */
+	SoundModel *model;	       /* Model where data is generated */
+	bool playing;		       /* True while thread is playing */
+	Lock playLock;		       /* Lock to be used when accessing playing */
+	int bufferSize;		       /* Size of buffer to use when generating/writing */
 
-	bool isPlaying();	      /* Synchronously reads the playing boolean */
+	bool isPlaying();	       /* Synchronously reads the playing boolean */
 
 	public:
 		
@@ -33,7 +33,7 @@ class PlayoutThread : public Thread {
 		 * @param model	       SoundModel where data should come from
 		 * @param bufferSize   Number of samples to use per period
 		 */
-		PlayoutThread(OutputSink *outputHandle, SoundModel *model, int bufferSize);
+		PlayoutThread(OutputMixer* outputHandle, SoundModel* model, int bufferSize);
 	
 		/** Begin running the playout thread */
 		virtual void run();

@@ -1,36 +1,35 @@
 #include "Lock.h"
-#include "OutputSink.h"
+#include "OutputAdaptor.h"
 #include "OutputMixer.h"
-#include "OutputDirect.h"
+//#include "OutputDirect.h"
 
 #include <cstring>
 
 #include <iostream>
 
-OutputMixer::OutputMixer(int sources, std::string pcm, int bufferSize, int rate) {
-	this->playoutno = sources;
-	this->count = sources;
-	this->outputHandle = new OutputDirect(pcm, bufferSize, rate);
-	this->bufferSize = bufferSize;
+OutputMixer::OutputMixer(int sources, int bufferSize, OutputAdaptor* oa)
+	: playoutno { sources }
+	, count { sources }
+	, bufferSize { bufferSize }
+	, adaptor { oa }
+{
 	this->buffer = new short [bufferSize];
 
 	/* Remove this if you like the sound of uninitialised data */
-	memset(this->buffer, 0, bufferSize*sizeof(short));
+	std::fill(buffer, buffer + bufferSize, 0);
 }
 
 OutputMixer::~OutputMixer() {
-
 	delete[] buffer;
-	delete outputHandle;
 }
 
 
-void OutputMixer::writeSamples(short buffer[], int length) {
+void OutputMixer::writeSamples(short buffer[]) {
 	int  i;
 
 	// Mix into the buffer 
 	bufflock.acquire();
-	for ( i = 0; i < length; i++ ) {
+	for ( i = 0; i < bufferSize; i++ ) {
 		this->buffer[i] += buffer[i]; 
 	}
 	bufflock.release();
@@ -42,8 +41,8 @@ void OutputMixer::writeSamples(short buffer[], int length) {
 		
 		// Samples written and buffer reset
 		bufflock.acquire();
-		outputHandle->writeSamples(this->buffer, length);
-		memset(this->buffer, 0, bufferSize*sizeof(short));
+		adaptor->writeSamples(this->buffer);
+		std::fill(this->buffer, this->buffer + bufferSize, 0);
 		bufflock.release();
 		count = playoutno;
 		countlock.broadcast();
@@ -52,9 +51,4 @@ void OutputMixer::writeSamples(short buffer[], int length) {
 		countlock.wait(); /* Wait for other threads to write */
 
 	countlock.release();
-}
- 
-void OutputMixer::close() {
-
-	outputHandle->close();
 }

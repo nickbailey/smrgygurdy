@@ -1,4 +1,4 @@
-#include "OutputDirect.h"
+#include "ALSAAdaptor.h"
 #include <string>
 #include <alsa/asoundlib.h>
 #include <poll.h>
@@ -6,19 +6,19 @@
 
 #define CHANNELS 1 
 
-OutputDirect::OutputDirect(std::string pcmName, unsigned int periodSize, unsigned int rate) :
-    underrunning(false)
+ALSAAdaptor::ALSAAdaptor(std::string pcmName, unsigned int periodSize, unsigned int rate) :
+    underrunning(false), bufsize(periodSize)
 {
 	playbackHandle = openPcm(pcmName, periodSize, rate);
 }
 
-snd_pcm_t * OutputDirect::openPcm(std::string pcmName, unsigned int periodSize, unsigned int rate) {
+snd_pcm_t* ALSAAdaptor::openPcm(std::string pcmName, unsigned int periodSize, unsigned int rate) {
 
-    snd_pcm_t *playbackHandle;
+    snd_pcm_t* playbackHandle;
 
     if (snd_pcm_open (&playbackHandle, pcmName.c_str(), SND_PCM_STREAM_PLAYBACK, 0) < 0) {
-		std::cerr << "OutputDirect: Cannot open audio device " << pcmName << std::endl;
-		throw new UnableToOpenPCMException;
+// 		std::cerr << "OutputDirect: Cannot open audio device " << pcmName << std::endl;
+		throw new OutputAdaptorException("Can't open audio device");
     }
 
     snd_pcm_hw_params_t *hardwareParams;
@@ -40,17 +40,18 @@ snd_pcm_t * OutputDirect::openPcm(std::string pcmName, unsigned int periodSize, 
     snd_pcm_sw_params_set_avail_min(playbackHandle, softwareParams, periodSize);
     snd_pcm_sw_params(playbackHandle, softwareParams);
 
-    return(playbackHandle);
+    return playbackHandle;
 
 }
 
-OutputDirect::~OutputDirect() {
-	// Nothing to do here
+ALSAAdaptor::~ALSAAdaptor() {
+
+	snd_pcm_drain (playbackHandle); // Block until all sound in ALSA buffer has been played
+	snd_pcm_close (playbackHandle);
 }
 
-void OutputDirect::writeSamples(short buffer[], int length) {
-	while((snd_pcm_writei(playbackHandle, buffer, length)) < length) {
-				
+void ALSAAdaptor::writeSamples(short buffer[]) {
+	while((snd_pcm_writei(playbackHandle, buffer, bufsize)) < bufsize) {
 		// Buffer XRUN occured here
 		snd_pcm_prepare(playbackHandle); /* Needs to be called to recover */
 		reportUnderrun();
@@ -59,17 +60,10 @@ void OutputDirect::writeSamples(short buffer[], int length) {
 	if (underrunning > 0) underrunning--;
 }
 
-void OutputDirect::reportUnderrun(void) {
+void ALSAAdaptor::reportUnderrun(void) {
 	if (!underrunning) {
-		std::cerr << "OutputDirect: Buffer underrun occurred" <<
-		             std::endl;
+		std::cerr << "OutputDirect: Buffer underrun occurred" << std::endl;
 	}
 	underrunning = 20;
 }
 		
-
-void OutputDirect::close() {
-
-	snd_pcm_drain (playbackHandle); // Block until all sound in ALSA buffer has been played
-	snd_pcm_close (playbackHandle);
-}

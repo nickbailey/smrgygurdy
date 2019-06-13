@@ -1,6 +1,6 @@
 #include "Thread.h"
 #include "StringAllocator.h"
-#include "OutputSink.h"
+#include "OutputAdaptor.h"
 #include "SoundModel.h"
 #include "Lock.h"
 #include <string>

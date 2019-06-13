@@ -38,6 +38,7 @@ JackOutputMixer::JackOutputMixer(int sources, std::string pcm, int bufferSize, i
 		std::cerr << "Cannot activate client\n";
 		exit (1);
 	}
+	
 }
 
 JackOutputMixer::~JackOutputMixer() {
