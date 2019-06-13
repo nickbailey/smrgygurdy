@@ -62,7 +62,7 @@ void ALSAAdaptor::writeSamples(short buffer[]) {
 
 void ALSAAdaptor::reportUnderrun(void) {
 	if (!underrunning) {
-		std::cerr << "OutputDirect: Buffer underrun occurred" << std::endl;
+		std::cerr << "SMRGyGurdy: ALSA Buffer underrun occurred" << std::endl;
 	}
 	underrunning = 20;
 }

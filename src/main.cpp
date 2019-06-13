@@ -17,7 +17,7 @@
 #include "OutputMixer.h"
 #include "ALSAAdaptor.h"
 #ifdef SUPPORT_JACKD
-#	include "JackOutputMixer.h"
+#	include "JACKAdaptor.h"
 #endif
 #ifdef SUPPORT_MINILAB1008
 #	include "MiniLAB1008.h"
@@ -217,7 +217,8 @@ int main(int argc, char ** argv) {
 	int sysBSize {bsize};
 	int sysRate  {rate};
 	
-	sink = new ALSAAdaptor(pcm, sysBSize, sysRate);
+	//sink = new ALSAAdaptor(pcm, sysBSize, sysRate);
+        sink = new JACKAdaptor(pcm);
 	
 	if (sink->size()) {
 		sysBSize = sink->size();

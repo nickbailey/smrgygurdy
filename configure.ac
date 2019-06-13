@@ -115,7 +115,7 @@ AS_IF([test "x$with_jackd" "!=" "xno"], [
     ])
     AC_DEFINE([SUPPORT_JACKD], [],
               [Build support for jackd])
-    AUDIO_BACKEND_CLASSES="$AUDIO_BACKEND_CLASSES JackOutputMixer.\$(OBJEXT)"
+    AUDIO_BACKEND_CLASSES="$AUDIO_BACKEND_CLASSES JACKAdaptor.\$(OBJEXT)"
 ])
 
 dnl Let the application know which pedal classes are supported

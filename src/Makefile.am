@@ -15,7 +15,7 @@ smrgygurdy_SOURCES = \
         ViolinFingering.cpp
 
 EXTRA_smrgygurdy_SOURCES = MiniLAB1080.cpp Comedi.cpp SerialPedal.cpp \
-                           JackOutputMixer.cpp
+                           JACKAdaptor.cpp
 
 smrgygurdy_LDADD = $(PEDAL_CLASSES) \
                    $(AUDIO_BACKEND_CLASSES) \
