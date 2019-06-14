@@ -218,8 +218,8 @@ int main(int argc, char ** argv) {
 	int sysRate  {rate};
 	
 	//sink = new ALSAAdaptor(pcm, sysBSize, sysRate);
-        sink = new JACKAdaptor(pcm);
-	
+        sink = new JACKAdaptor("SMRGyGurdy");
+
 	if (sink->size()) {
 		sysBSize = sink->size();
 		if (sysBSize != bsize)
@@ -231,7 +231,7 @@ int main(int argc, char ** argv) {
 		sysRate = sink->rate();
 		if (sysRate != rate)
 			cout << "Audio system overrides configured sample rate. Using "
-			     << sysBSize << ".\n";
+			     << sysRate << "Hz.\n";
 	}
 
 	mixer = new OutputMixer(noThreads, sysBSize, sink); 
@@ -299,7 +299,7 @@ int main(int argc, char ** argv) {
 	pedal->start();
 
 	// Everything set up: commence audio output.
-	sink->commence();
+	sink->start();
 
 	// Console interaction
 	cout << "Enter Q to quit" << endl;

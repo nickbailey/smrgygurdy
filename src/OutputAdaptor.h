@@ -54,7 +54,7 @@ public:
 	 * after all the other initialisation has happened to prevent
 	 * a delay causing overruns.
 	 */
-	virtual void commence(void) { }
+	virtual void start(void) { }
 
 	/* Exception List */
 

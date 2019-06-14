@@ -12,7 +12,7 @@ JACKAdaptor::JACKAdaptor(std::string pcm, int bufferSize, int rate) {
 	// Communicate with jack
 	jack_status_t status;
 	jack_options_t options = JackNullOption;
-        const char* client_name(pcm.c_str());
+        const char* client_name { pcm.c_str() };
         
 	client = jack_client_open (client_name, options, &status, nullptr /* <- server_name */);
 	if (client == nullptr) {
@@ -46,6 +46,7 @@ JACKAdaptor::JACKAdaptor(std::string pcm, int bufferSize, int rate) {
 }
 
 JACKAdaptor::~JACKAdaptor() {
+	jack_deactivate(client);
 	jack_client_close(client);
 	delete[] buffer;
 }
