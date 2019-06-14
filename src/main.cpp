@@ -87,6 +87,10 @@ int main(int argc, char ** argv) {
 	double v_bow_max;   cfg.lookupValue("model.bow_speed_max", v_bow_max);
 	double v_bow_min;   cfg.lookupValue("model.bow_speed_min", v_bow_min);
 	int verbosity;      cfg.lookupValue("verbosity", verbosity);
+#ifdef SUPPORT_JACKD
+	bool use_jack;      cfg.lookupValue("jack.use", use_jack);
+	string jack_name;   cfg.lookupValue("jack.client_name", jack_name);
+#endif
 
 	// Parse command line, perhaps changing configured values
 	static struct option long_options[] =  {
@@ -106,6 +110,10 @@ int main(int argc, char ** argv) {
 	  {"list-midi",    no_argument,       0, 'l'},
 	  {"verbose",      optional_argument, 0, 'v'},
 	  {"serial-device",required_argument, 0, 'C'},
+#ifdef SUPPORT_JACKD
+	  {"jack",         optional_argument, 0, 'j'},
+	  //{"jack-hookup",  required_argument, 0, 'J'},
+#endif
 	  {"help",         no_argument,       0, 'h'},
 	  {0, 0, 0, 0}
 	};
@@ -114,7 +122,7 @@ int main(int argc, char ** argv) {
 		int c, option_index;
 		do {
 			c = getopt_long (argc, argv,
-					"d:a:P:b:r:p:t:M:m:T:g:S:s:lv::C:h",
+					"d:a:P:b:r:p:t:M:m:T:g:S:s:lv::C:j::h",
 					long_options, &option_index);
 			switch (c) {
 			case 'd':
@@ -196,6 +204,23 @@ int main(int argc, char ** argv) {
 				verbosity = 1;
 				if (optarg > 0) verbosity = atoi(optarg);
 				cfg.lookup("verbosity") = verbosity;
+				cout << "Verbose output (level " << verbosity << ")\n";
+				break;
+#ifdef SUPPORT_JACKD
+			case 'j':
+				use_jack = true;
+				jack_name = "SMRGyGurdy";
+				if (optarg > 0) {
+					jack_name = optarg;
+					if (jack_name == "no") {
+						use_jack = false;
+					} else {
+						cfg.lookup("jack.client_name") = jack_name;
+					}
+				}
+				cfg.lookup("jack.use") = use_jack;
+				break;
+#endif
 			case '?':
 				// getopt_long already printed an error message
 				break;
@@ -217,8 +242,14 @@ int main(int argc, char ** argv) {
 	int sysBSize {bsize};
 	int sysRate  {rate};
 	
-	//sink = new ALSAAdaptor(pcm, sysBSize, sysRate);
-        sink = new JACKAdaptor("SMRGyGurdy");
+#ifdef SUPPORT_JACKD
+	if (use_jack)
+		sink = new JACKAdaptor(jack_name);
+	else
+		sink = new ALSAAdaptor(pcm, sysBSize, sysRate);
+#else
+	sink = new ALSAAdaptor(pcm, sysBSize, sysRate);
+#endif
 
 	if (sink->size()) {
 		sysBSize = sink->size();
