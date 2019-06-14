@@ -461,6 +461,10 @@ int usage(void)
         cout << "\t        2 = also report changes of pedal value" << endl;
         cout << "\t--list-midi | -l:               List midi input devices and exit" << endl;
 	cout << "\t--serial-dev=dev | -Cdev:       Read serial pedal data from dev" << endl;
+#ifdef SUPPORT_JACKD
+	cout << "\t--jack[=name] | -j[name]:       Use JACK; optionally set port name" << endl;
+	cout << "\t--jack=no | -jno:               Use ALSA" << endl;
+#endif
         cout << "\t--help | -h:                    Print usage and exit" << endl;
 
 	return 0;
