@@ -8,7 +8,8 @@ class SoundModel {
 
 
 	protected:
-		double gain;
+		double gain;		/**< Current output gain */
+		double target_gain;	/**< Gain to aim for at the end of this buffer */
 
 	public:
 

@@ -13,6 +13,7 @@ SoundModelPoly::SoundModelPoly(std::vector<SoundModel*> soundModelList,
 		throw new NoSoundModelException();
 
 	setOutputGain(output_gain);
+	gain = output_gain;
 
 }
 
@@ -24,7 +25,8 @@ SoundModelPoly::SoundModelPoly(int poly, double output_gain) {
 }
 
 void SoundModelPoly::setOutputGain(double output_gain) {
-	gain = output_gain;
+	// Defer gain change until end of audio buffer (dezipping)
+	target_gain = output_gain;
 
 	// tell all agregated SoundModelPoly's the gain's changed
 	// (SoundModelMonos should ingore this virtual method invocation)
@@ -32,7 +34,7 @@ void SoundModelPoly::setOutputGain(double output_gain) {
 	        soundModelList.begin();
 	    sndModIterator != soundModelList.end();
 	    sndModIterator++) {
-		(*sndModIterator)->setOutputGain(gain);
+		(*sndModIterator)->setOutputGain(output_gain);
 	}
 }
 
@@ -102,7 +104,13 @@ void SoundModelPoly::getSamples(short samples[], const int bufferSize) {
 		}
 	}
 
-	for(i = 0; i < bufferSize; i++)
+	// Dezipper the audio output by changing the output gain
+	// progressively along the outbut buffer length
+	double gain_step { (double)(target_gain-gain)/bufferSize };
+	for(i = 0; i < bufferSize; i++) {
 		samples[i] = accumulator[i] * gain;
+		gain += gain_step;
+	}
+	gain = target_gain;
 }
 
