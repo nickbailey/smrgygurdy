@@ -219,9 +219,12 @@ int main(int argc, char ** argv) {
 					}
 				}
 				cfg.lookup("jack.use") = use_jack;
-				cout << "JACK audio output on port " << jack_name
-				     << ".\nServer parameters override "
-				        "rate and buffer size SMRGyGurdy settings.\n";
+				if (use_jack)
+					cout << "JACK audio output on port " << jack_name
+					     << ".\nServer parameters override "
+					        "rate and buffer size SMRGyGurdy settings.\n";
+				else
+					cout << "JACK audio output disabled.\n";
 				break;
 #endif
 			case '?':
