@@ -1,6 +1,7 @@
 #ifndef STRING_ALLOCATOR_H
 #define STRING_ALLOCATOR_H
 #include "artifastring/artifastring_instrument.h"
+#include "artifastring/artifastring_defines.h"
 #include "ViolinFingering.h"
 
 /**
@@ -18,8 +19,10 @@ class StringAllocator {
 	public:
 		/**
 		 * Default constructor
+		 * 
+		 * @param sr operating sample rate
 		 */
-		StringAllocator();
+		StringAllocator(const int sr);
 
 		/**
 	  	 * Return sample buffer containing sound samples

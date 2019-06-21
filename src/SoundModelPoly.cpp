@@ -17,9 +17,9 @@ SoundModelPoly::SoundModelPoly(std::vector<SoundModel*> soundModelList,
 
 }
 
-SoundModelPoly::SoundModelPoly(int poly, double output_gain) {
+SoundModelPoly::SoundModelPoly(int poly, const int sr, double output_gain) {
 	for (int i = 0; i < poly; i++) {
-		soundModelList.push_back(new SoundModelMono);
+		soundModelList.push_back(new SoundModelMono(sr));
 	}
 	setOutputGain(output_gain);
 }

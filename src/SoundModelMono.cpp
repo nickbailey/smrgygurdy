@@ -9,7 +9,8 @@
 #define RELEASE_INIT (1024*1600)
 #define DEFAULT_PEDAL_SPEED 1;
 
-SoundModelMono::SoundModelMono() {
+SoundModelMono::SoundModelMono(const int sr)
+ : violin(sr) {
 
 	this->noteOn = false;
 	this->currentNote = -1;

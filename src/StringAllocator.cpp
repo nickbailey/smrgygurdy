@@ -2,9 +2,10 @@
 #include <artifastring/artifastring_instrument.h>
 //#include <iostream>
 
-StringAllocator::StringAllocator() : bowRatioFromBridge(0.07),
-                                     bowForce(2.5),
-                                     vc(Cello) {
+StringAllocator::StringAllocator(const int sr)
+ : bowRatioFromBridge(0.07)
+ , bowForce(2.5)
+ , vc(Cello, 0, sr) {
 	this->bowSpeed = 0;
 	this->stringNo = 0;
 	silence();

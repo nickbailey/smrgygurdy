@@ -30,8 +30,10 @@ class SoundModelMono : public SoundModel {
 		 * Default contstructor
 		 *
 		 * Note that this is not usually called by anything other than a factory.
+		 * 
+		 * @param sr Operating sample rate
 		 */
-		SoundModelMono(); 
+		SoundModelMono(const int st); 
 
 		/**
 		 * @return true if note is currently on

@@ -282,7 +282,7 @@ int main(int argc, char ** argv) {
 		int models = perThread;
 		if (i < extra) models++;
 		//cout << "Assigning " << models << " models to a thread" << endl;
-		subModels.push_back(new SoundModelPoly(models, output_gain));
+		subModels.push_back(new SoundModelPoly(models, sysRate, output_gain));
 	}
 
 	mainModel = new SoundModelPoly(subModels, output_gain);

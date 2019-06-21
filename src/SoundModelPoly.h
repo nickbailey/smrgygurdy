@@ -36,7 +36,8 @@ class SoundModelPoly : public SoundModel {
 		 * final result
 		 */
 		SoundModelPoly(std::vector<SoundModel*> soundModelList,
-		               double output_gain=0.2);
+		               double output_gain=0.2
+			      );
 
 		/**
 		 * Create a SoundModelPoly with a number of SoundModelMonos
@@ -45,11 +46,12 @@ class SoundModelPoly : public SoundModel {
 		 * which creates a given number of monophonic sound sources
 		 *
 		 * @param poly The numer of monophonic sound models to create
+		 * @param sr Operating sample rate
 		 * @param output_gain
 		 * (optional) Multiply model outputs by this to yield the
 		 * final result
 		 */
-		SoundModelPoly(int poly, double output_gain=0.2);
+		SoundModelPoly(int poly, const int sr, double output_gain=0.2);
 
 		/**
 		 * Set the output gain
