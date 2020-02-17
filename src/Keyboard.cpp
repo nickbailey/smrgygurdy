@@ -124,12 +124,27 @@ void Keyboard::midiAction() {
 	break;
 
     case SND_SEQ_EVENT_CONTROLLER:
-		// Forward modulation events to the controller,
-		// just in case anybody is interested.
-		if (event->data.control.param == 1) {
-			const int p = event->data.control.value;
-			controller->modulationEvent(p);
-		} 
+        
+    	const int p = event->data.control.value;
+
+        switch (event->data.control.param) {
+        case 1:
+    		// Forward modulation events to the controller,
+    		// just in case anybody is interested.
+    		controller->modulationEvent(p);
+            
+            break;
+
+        case 64:
+            // Process sustain pedal events
+            if (announce) {
+                fprintf(stderr, "Sustain pedal change, value %d\n", p);
+            }
+
+            break;
+
+        }
+        
         break;
 
 	}

@@ -4,6 +4,7 @@
 #include "Thread.h"
 #include "Lock.h"
 #include "Controller.h"
+#include <list>
 #include <alsa/asoundlib.h>
 
 /**
@@ -22,6 +23,11 @@ class Keyboard : public Thread {
 	int keyboardId;
 	int keyboardPort;
 	int announce;
+    /** A list of note off commands not yet sent
+     *  because the sustain pedal is pressed.
+     */
+    std::list<int> deferred_noteoff;
+    bool sustain; /**< whether sustain pedal is depressed */
 
 	/**
 	 * Creates a new ALSA sequencer client
