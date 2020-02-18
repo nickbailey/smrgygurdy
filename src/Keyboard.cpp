@@ -111,6 +111,7 @@ void Keyboard::noteOff(unsigned char note) {
 }
 
 void Keyboard::release(void) {
+    sustain = false;
 	for (keyset::iterator it = deferred_noteoff.begin(); it != deferred_noteoff.end(); ++it)
 		noteOff(*it);
 	deferred_noteoff.clear();
@@ -160,11 +161,11 @@ void Keyboard::midiAction() {
 				// Process sustain pedal events
 				bool s {p > 63};
 				if (sustain && !s) release();
-				sustain = s;
+                sustain = s;
 				
 				if (announce) {
-					fprintf(stderr, "Sustain pedal change, value %d (sustain %s)",
-							p,  this->sustain ? "on" : "off");
+					fprintf(stderr, "Sustain pedal change, value %d (sustain %s)\n",
+							p,  sustain ? "on" : "off");
 				}
 				break;
 

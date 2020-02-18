@@ -50,7 +50,7 @@ class Keyboard : public Thread {
 	void noteOff(unsigned char note);
 	
 	/**
-     * Release all systained notes. @sa noteOn
+     * Release all sustained notes and cancel sustain. @sa noteOn
      */
 	void release(void);
 	
