@@ -29,6 +29,8 @@ The following libraries need to be installed first:
         bogiolib (https://github.com/nickbailey/bogiolib -
                   a wrapper to simplify access to comedilib)
 ```
+A version of this library with some maintenance updates is available here:
+https://github.com/nickbailey/artifastring
 
 We recommend you build in a local build dirctory and install thus:
 
